@@ -1,0 +1,954 @@
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Xoldyx Store — Tienda de Cuentas</title>
+		<script src="https://cdn.tailwindcss.com"></script>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+			<style>
+				:root{--accent1:#7c3aed;--accent2:#06b6d4}
+				body{font-family:Inter,system-ui,Arial;background:#05060a;color:#e6eef8}
+				.glass{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.04);border-radius:12px}
+				.brand{font-family:Orbitron,Inter,Arial;font-weight:800;color:var(--accent1)}
+				.accent-btn{background:linear-gradient(90deg,var(--accent1),var(--accent2));box-shadow:0 10px 30px rgba(124,58,237,0.12)}
+				.product-img{height:56px;filter:drop-shadow(0 10px 30px rgba(2,6,23,0.6));transition:transform .18s ease}
+				.product-card:hover .product-img{transform:translateY(-6px)}
+				.muted{color:#98a0b3}
+
+				/* Animations */
+				@keyframes fadeInUp { from { opacity:0; transform:translateY(10px);} to {opacity:1; transform:translateY(0);} }
+				@keyframes neonGlow { 0%{text-shadow:0 0 6px rgba(124,58,237,0.12);}50%{text-shadow:0 0 18px rgba(6,182,212,0.12);}100%{text-shadow:0 0 6px rgba(124,58,237,0.12);} }
+				@keyframes slideInRight { from{ transform:translateX(20px); opacity:0 } to{ transform:translateX(0); opacity:1 } }
+
+				.animate-fade{ animation: fadeInUp .45s ease forwards; }
+				.glow-title{ animation: neonGlow 3s ease-in-out infinite; }
+				.cart-slide{ animation: slideInRight .25s ease forwards }
+
+				/* Carousel with animations */
+				.carousel{ position:relative; overflow:hidden; border-radius:12px }
+				.carousel-track{ display:flex; gap:12px; transition:transform 1s cubic-bezier(.4,0,.2,1) }
+				.carousel-item{ 
+					min-width:240px; 
+					flex:0 0 240px;
+					opacity: 0;
+					animation: fadeSlideIn .8s forwards;
+				}
+				@keyframes fadeSlideIn {
+					from { opacity: 0; transform: translateY(10px); }
+					to { opacity: 1; transform: translateY(0); }
+				}
+				.carousel-item img {
+					transition: transform .3s ease;
+				}
+				.carousel-item:hover img {
+					transform: scale(1.05);
+				}
+				.carousel-nav{ 
+					position:absolute; 
+					top:50%; 
+					transform:translateY(-50%); 
+					width:100%; 
+					display:flex; 
+					justify-content:space-between; 
+					pointer-events:none;
+					opacity: 0;
+					transition: opacity .3s ease;
+				}
+				.carousel:hover .carousel-nav {
+					opacity: 1;
+				}
+				.carousel-nav button{ 
+					pointer-events:all; 
+					background:rgba(124,58,237,0.2); 
+					border-radius:50%; 
+					width:40px; 
+					height:40px; 
+					border:none; 
+					cursor:pointer; 
+					font-size:24px; 
+					color:#fff;
+					transition: background-color .3s ease, transform .2s ease;
+				}
+				.carousel-nav button:hover {
+					background:rgba(124,58,237,0.4);
+					transform: scale(1.1);
+				}
+				/* counter bump */
+				#cartCount.bump{ transform:scale(1.18); transition:transform .18s ease; }
+
+				/* Top menu / submenu styles */
+				.top-hero{ padding:18px 0; border-bottom:1px solid rgba(255,255,255,0.03); margin-bottom:18px }
+				.navbar{ display:flex; align-items:center; gap:18px }
+				.menu{ position:relative }
+				.menu-button{ background:transparent; border:1px solid rgba(255,255,255,0.04); padding:8px 12px; border-radius:8px; cursor:pointer }
+				.submenu{ position:absolute; left:0; top:calc(100% + 8px); background:rgba(7,16,36,0.9); border:1px solid rgba(255,255,255,0.04); padding:8px; border-radius:8px; min-width:220px; display:none; z-index:50 }
+				.submenu.show{ display:block }
+				.submenu a{ display:block; padding:6px 8px; color:#e6eef8; text-decoration:none; border-radius:6px }
+				.submenu a:hover{ background:rgba(255,255,255,0.02) }
+
+				/* Global responsive images */
+				img { max-width: 100%; height: auto; }
+
+				/* Responsive adjustments */
+		@media (max-width: 640px) {
+			.carousel-item {
+				min-width: 180px;
+				flex: 0 0 180px;
+			}
+		}
+			</style>
+	</head>
+	<body>
+		<!-- Background video (place your file at videos/background.mp4) -->
+		<video id="bgVideo" class="fixed inset-0 w-auto min-w-full min-h-full object-cover -z-10" autoplay muted loop playsinline>
+			<source src="videos/background.mp4" type="video/mp4">
+		</video>
+
+		<style>
+			/* overlay layer so content readable */
+			#bgVideo{opacity:.28}
+			.bg-overlay{position:fixed;inset:0;background:linear-gradient(180deg,rgba(5,6,10,0.35),rgba(5,6,10,0.6));z-index:-5}
+		</style>
+		<div class="bg-overlay" aria-hidden="true"></div>
+		<header class="py-5 border-b border-white/6">
+			<div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
+				<div class="flex items-center gap-4">
+					<div class="w-11 h-11 rounded-xl bg-gradient-to-br from-purple-600 to-cyan-400 flex items-center justify-center text-black font-bold">X</div>
+					<div>
+						<div class="brand text-lg">Xoldyx Store</div>
+						<div class="text-xs muted">Perfiles y cuentas completas — entrega por WhatsApp</div>
+					</div>
+				</div>
+				<div class="flex items-center gap-3">
+							<input id="search" class="bg-[#071024] border border-white/6 rounded-xl px-3 py-2 text-sm w-64" placeholder="Buscar (ej. Netflix, Canva, VPN...)" />
+							<button id="editToggle" class="px-3 py-2 rounded-xl bg-white/5 text-sm">Editar</button>
+							<button id="audioToggle" class="px-3 py-2 rounded-xl bg-white/5 text-sm">▶︎ Música</button>
+							<button id="contactBtn" class="px-3 py-2 rounded-xl bg-white/5 text-sm">Contacto</button>
+							<button id="cartBtn" class="relative px-3 py-2 rounded-xl accent-btn text-black font-semibold">Carrito <span id="cartCount" class="absolute -top-2 -right-3 bg-white text-black rounded-full px-2 text-xs">0</span></button>
+						</div>
+
+						<!-- Contact Modal -->
+						<div id="contactModal" class="fixed inset-0 hidden z-50">
+							<div class="absolute inset-0 bg-black/60" style="backdrop-filter:blur(4px)"></div>
+							<div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md">
+								<div class="bg-[#071024] p-6 rounded-xl">
+									<div class="flex items-center justify-between mb-6">
+										<h3 class="text-xl font-bold">Contacto</h3>
+										<button id="closeContact" class="px-3 py-1 rounded bg-white/5">✕</button>
+									</div>
+									<div class="grid grid-cols-2 gap-4">
+										<a href="https://wa.me/51907376960" target="_blank" class="flex items-center gap-3 p-3 rounded-xl glass hover:bg-white/5 transition-colors">
+											<img src="https://api.iconify.design/logos/whatsapp.svg" class="w-8 h-8" alt="WhatsApp"/>
+											<div class="text-sm">WhatsApp</div>
+										</a>
+										<a href="https://www.tiktok.com/@tu_usuario" target="_blank" class="flex items-center gap-3 p-3 rounded-xl glass hover:bg-white/5 transition-colors">
+											<img src="https://api.iconify.design/logos/tiktok-icon.svg" class="w-8 h-8" alt="TikTok"/>
+											<div class="text-sm">TikTok</div>
+										</a>
+										<a href="https://www.facebook.com/tu_usuario" target="_blank" class="flex items-center gap-3 p-3 rounded-xl glass hover:bg-white/5 transition-colors">
+											<img src="https://api.iconify.design/logos/facebook.svg" class="w-8 h-8" alt="Facebook"/>
+											<div class="text-sm">Facebook</div>
+										</a>
+										<a href="https://www.instagram.com/tu_usuario" target="_blank" class="flex items-center gap-3 p-3 rounded-xl glass hover:bg-white/5 transition-colors">
+											<img src="https://api.iconify.design/skill-icons/instagram.svg" class="w-8 h-8" alt="Instagram"/>
+											<div class="text-sm">Instagram</div>
+										</a>
+										<a href="https://t.me/tu_usuario" target="_blank" class="flex items-center gap-3 p-3 rounded-xl glass hover:bg-white/5 transition-colors">
+											<img src="https://api.iconify.design/logos/telegram.svg" class="w-8 h-8" alt="Telegram"/>
+											<div class="text-sm">Telegram</div>
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
+			</div>
+		</header>
+
+		<main class="max-w-6xl mx-auto px-4 py-10">
+			<!-- Hero + Top submenu -->
+			<div class="top-hero">
+				<div class="navbar max-w-6xl mx-auto px-4 flex items-center justify-between">
+					<div>
+						<h2 class="text-2xl font-bold">Bienvenido a Xoldyx Store</h2>
+						<p class="text-sm muted">Compra perfiles y cuentas completas. Selecciona una categoría o revisa nuestras cuentas abajo.</p>
+					</div>
+					<div class="menu">
+						<button id="accountsBtn" class="menu-button">Cuentas ▾</button>
+						<div id="accountsSubmenu" class="submenu" aria-hidden="true"></div>
+					</div>
+				</div>
+			</div>
+			<section class="mb-8 grid md:grid-cols-2 gap-8 items-center">
+				<div>
+					<h1 class="text-4xl font-extrabold mb-3">Catálogo de cuentas <span class="text-cyan-300">(Perfil / Cuenta completa)</span></h1>
+					<p class="text-gray-300 max-w-xl">Compra perfiles o cuentas completas de plataformas populares. Añade al carrito y confirma por WhatsApp para coordinar entrega y pago.</p>
+				</div>
+				<div class="glass p-6">
+					<h3 class="text-lg font-semibold mb-2">Promoción</h3>
+					<p class="text-sm muted">Combo streaming: 2 perfiles por S/25 — pregunta por disponibilidad al confirmar tu pedido.</p>
+				</div>
+			</section>
+
+			<section id="controls" class="mb-6 space-y-4">
+				<div class="flex items-center justify-between flex-wrap gap-4">
+					<div class="flex items-center gap-3 flex-wrap">
+						<select id="filterCategory" class="bg-[#071024] border border-white/6 rounded-xl px-3 py-2 text-sm">
+							<option value="">Todas las categorías</option>
+							<option value="Streaming">Streaming</option>
+							<option value="Herramientas">Herramientas</option>
+							<option value="VPN">VPN</option>
+							<option value="Cursos">Cursos</option>
+							<option value="Servicios">Servicios</option>
+						</select>
+						<div class="flex items-center gap-2">
+							<input type="number" id="minPrice" placeholder="Precio min" class="w-24 bg-[#071024] border border-white/6 rounded-xl px-3 py-2 text-sm" />
+							<span class="text-sm">-</span>
+							<input type="number" id="maxPrice" placeholder="Precio max" class="w-24 bg-[#071024] border border-white/6 rounded-xl px-3 py-2 text-sm" />
+						</div>
+					</div>
+					<div class="flex items-center gap-3">
+						<select id="sortProducts" class="bg-[#071024] border border-white/6 rounded-xl px-3 py-2 text-sm">
+							<option value="">Ordenar por</option>
+							<option value="price-asc">Precio: Menor a mayor</option>
+							<option value="price-desc">Precio: Mayor a menor</option>
+							<option value="name">Nombre</option>
+						</select>
+						<button id="themeToggle" class="px-3 py-2 rounded-xl bg-white/5 text-sm">🌙 Tema</button>
+					</div>
+				</div>
+				<div class="flex items-center justify-between">
+					<div class="text-sm muted">Selecciona variante: Perfil o Cuenta completa donde aplique</div>
+					<div id="activeFilters" class="flex gap-2 text-xs"></div>
+				</div>
+			</section>
+
+					<section id="catalog">
+						<!-- Carousel destacado -->
+						<div class="mb-6">
+							<h2 class="text-xl font-bold mb-3">Destacados</h2>
+							<div class="carousel glass p-4" id="carousel">
+								<div class="carousel-track" id="carouselTrack"></div>
+								<div class="carousel-nav">
+									<button id="prevCarousel" class="p-2 rounded-full bg-white/5">‹</button>
+									<button id="nextCarousel" class="p-2 rounded-full bg-white/5">›</button>
+								</div>
+							</div>
+						</div>
+
+						<div id="productsGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+					</section>
+		</main>
+
+		<!-- Cart Drawer -->
+		<div id="cartDrawer" class="fixed inset-0 hidden">
+			<div id="backdrop" class="absolute inset-0 bg-black/60" style="backdrop-filter:blur(4px)"></div>
+			<aside class="absolute right-0 top-0 h-full w-full sm:w-[420px] bg-[#071024] p-6">
+				<div class="flex items-center justify-between mb-4">
+					<h3 class="text-xl font-bold">Tu carrito</h3>
+					<button id="closeCart" class="px-3 py-1 rounded bg-white/5">Cerrar</button>
+				</div>
+				<div id="cartList" class="space-y-3 mb-4"></div>
+				<div class="border-t border-white/6 pt-4">
+					<div class="space-y-2 mb-3">
+						<input id="couponCode" placeholder="Código de cupón" class="w-full bg-[#071024] border border-white/6 rounded-xl px-3 py-2 text-sm" />
+						<div class="flex gap-2">
+							<button id="applyCoupon" class="flex-1 py-2 rounded-xl bg-white/5 text-sm">Aplicar Cupón</button>
+							<button id="saveCartBtn" class="flex-1 py-2 rounded-xl bg-white/5 text-sm">Guardar Carrito</button>
+						</div>
+					</div>
+					<div id="cartSummary" class="space-y-2 border-t border-white/6 pt-4 mb-3">
+						<div class="flex items-center justify-between text-sm"><span>Subtotal</span><strong id="subtotal">S/ 0.00</strong></div>
+						<div class="flex items-center justify-between text-sm text-green-400"><span>Descuento</span><strong id="discount">-S/ 0.00</strong></div>
+						<div class="flex items-center justify-between text-lg font-bold"><span>Total</span><strong id="total">S/ 0.00</strong></div>
+					</div>
+					<div class="space-y-2">
+						<label class="text-sm muted">Nombre (opcional)</label>
+						<input id="buyerName" class="w-full bg-[#071024] border border-white/6 rounded-xl px-3 py-2 text-sm" placeholder="Ej: Carlos" />
+						<label class="text-sm muted">Notas (opcional)</label>
+						<textarea id="orderNotes" rows="3" class="w-full bg-[#071024] border border-white/6 rounded-xl px-3 py-2 text-sm" placeholder="Ej: Entregar en la noche"></textarea>
+						<div class="flex gap-3">
+							<label class="flex items-center gap-2"><input type="radio" name="pay" value="Yape" checked/> Yape</label>
+							<label class="flex items-center gap-2"><input type="radio" name="pay" value="Plin"/> Plin</label>
+							<label class="flex items-center gap-2"><input type="radio" name="pay" value="Binance"/> Binance</label>
+						</div>
+						<div class="flex gap-2">
+						  <button id="waCheckout" class="flex-1 w-full py-3 rounded-xl accent-btn text-black font-semibold">Enviar pedido por WhatsApp</button>
+						  <button id="clearCart" class="flex-1 w-full py-3 rounded-xl bg-red-600 text-black font-semibold">Vaciar carrito</button>
+						</div>
+					</div>
+				</div>
+			</aside>
+		</div>
+
+				<!-- Back to top button -->
+				<button id="backToTop" class="fixed bottom-4 right-4 p-3 rounded-full accent-btn text-black shadow-lg opacity-0 transition-opacity duration-300 z-50">↑</button>
+
+                <!-- FAQ Section -->
+                <section class="max-w-6xl mx-auto px-4 py-12 border-t border-white/6">
+                    <h2 class="text-2xl font-bold mb-8">Preguntas Frecuentes</h2>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="glass p-6">
+                            <h3 class="text-lg font-semibold mb-4">¿Cómo funciona la entrega?</h3>
+                            <p class="text-sm text-gray-300">Una vez realizado el pago, recibirás los accesos de manera inmediata a través de WhatsApp. El proceso es rápido y seguro.</p>
+                        </div>
+                        <div class="glass p-6">
+                            <h3 class="text-lg font-semibold mb-4">¿Son cuentas garantizadas?</h3>
+                            <p class="text-sm text-gray-300">Sí, todas nuestras cuentas tienen garantía. En caso de cualquier problema, proporcionamos reemplazo inmediato.</p>
+                        </div>
+                        <div class="glass p-6">
+                            <h3 class="text-lg font-semibold mb-4">¿Qué métodos de pago aceptan?</h3>
+                            <p class="text-sm text-gray-300">Aceptamos Yape, Plin y Binance para tu comodidad. Los pagos son verificados al instante.</p>
+                        </div>
+                        <div class="glass p-6">
+                            <h3 class="text-lg font-semibold mb-4">¿Qué hacer si hay problemas?</h3>
+                            <p class="text-sm text-gray-300">Contáctanos inmediatamente por WhatsApp. Nuestro soporte está disponible para ayudarte y resolver cualquier inconveniente.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Reviews Section -->
+                <section class="max-w-6xl mx-auto px-4 py-12 border-t border-white/6">
+                    <h2 class="text-2xl font-bold mb-8">Valoraciones de Clientes</h2>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="glass p-6">
+                            <div class="flex items-center mb-4">
+                                <div class="text-yellow-400 text-xl">★★★★★</div>
+                                <div class="ml-2 text-sm text-gray-300">hace 2 días</div>
+                            </div>
+                            <p class="text-sm text-gray-300 mb-2">"Excelente servicio, entrega inmediata y muy buena atención al cliente."</p>
+                            <div class="text-xs text-gray-400">Carlos R.</div>
+                        </div>
+                        <div class="glass p-6">
+                            <div class="flex items-center mb-4">
+                                <div class="text-yellow-400 text-xl">★★★★★</div>
+                                <div class="ml-2 text-sm text-gray-300">hace 5 días</div>
+                            </div>
+                            <p class="text-sm text-gray-300 mb-2">"Todo perfecto, las cuentas funcionan muy bien. Recomendado!"</p>
+                            <div class="text-xs text-gray-400">María S.</div>
+                        </div>
+                        <div class="glass p-6">
+                            <div class="flex items-center mb-4">
+                                <div class="text-yellow-400 text-xl">★★★★★</div>
+                                <div class="ml-2 text-sm text-gray-300">hace 1 semana</div>
+                            </div>
+                            <p class="text-sm text-gray-300 mb-2">"Muy rápida la entrega y excelente soporte cuando lo necesité."</p>
+                            <div class="text-xs text-gray-400">Juan P.</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Loyalty Program -->
+                <section class="max-w-6xl mx-auto px-4 py-12 border-t border-white/6">
+                    <h2 class="text-2xl font-bold mb-8">Programa de Fidelización</h2>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="glass p-6">
+                            <h3 class="text-lg font-semibold mb-4 text-gray-300">Cliente Normal</h3>
+                            <ul class="text-sm text-gray-300 space-y-2">
+                                <li>• Acumula 1 punto por cada S/10 en compras</li>
+                                <li>• Acceso a ofertas especiales</li>
+                                <li>• Soporte prioritario</li>
+                            </ul>
+                        </div>
+                        <div class="glass p-6 relative overflow-hidden">
+                            <div class="absolute -right-6 -top-6 w-24 h-24 bg-gradient-to-br from-purple-600 to-cyan-400 rotate-45"></div>
+                            <h3 class="text-lg font-semibold mb-4 text-gray-200">Cliente Plata</h3>
+                            <ul class="text-sm text-gray-300 space-y-2">
+                                <li>• 2 puntos por cada S/10 en compras</li>
+                                <li>• 5% de descuento en todas las compras</li>
+                                <li>• Acceso anticipado a nuevos productos</li>
+                                <li>• Soporte VIP</li>
+                            </ul>
+                        </div>
+                        <div class="glass p-6 relative overflow-hidden">
+                            <div class="absolute -right-6 -top-6 w-24 h-24 bg-gradient-to-br from-yellow-600 to-yellow-400 rotate-45"></div>
+                            <h3 class="text-lg font-semibold mb-4 text-gray-200">Cliente Oro</h3>
+                            <ul class="text-sm text-gray-300 space-y-2">
+                                <li>• 3 puntos por cada S/10 en compras</li>
+                                <li>• 10% de descuento en todas las compras</li>
+                                <li>• Acceso exclusivo a ofertas especiales</li>
+                                <li>• Soporte VIP 24/7</li>
+                                <li>• Garantía extendida</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Legal Information -->
+                <section class="max-w-6xl mx-auto px-4 py-12 border-t border-white/6">
+                    <div class="grid md:grid-cols-3 gap-6 text-sm text-gray-300">
+                        <div>
+                            <h3 class="font-semibold mb-4">Garantía</h3>
+                            <p>Todas nuestras cuentas incluyen garantía de funcionamiento. En caso de cualquier problema, proporcionamos reemplazo inmediato sin costo adicional.</p>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold mb-4">Términos y Condiciones</h3>
+                            <p>Al realizar una compra, aceptas nuestros términos y condiciones. Las cuentas son para uso personal y no se permite su reventa.</p>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold mb-4">Privacidad</h3>
+                            <p>Protegemos tu información personal y no la compartimos con terceros. Tus datos están seguros con nosotros.</p>
+                        </div>
+                    </div>
+                </section>
+
+				<footer class="py-8 text-center text-sm text-gray-400">
+					© <span id="year"></span> Xoldyx Store — Pagos y entrega por WhatsApp
+				</footer>
+
+		<script>
+			// Config
+			const WHATSAPP_NUMBER = '51907376960'; // coloca tu número si quieres: '51XXXXXXXXX'
+			const formatter = new Intl.NumberFormat('es-PE',{style:'currency',currency:'PEN'});
+
+            // Loyalty Program Config
+            const LOYALTY_LEVELS = {
+                normal: { name: 'Normal', pointsMultiplier: 1, discount: 0 },
+                silver: { name: 'Plata', pointsMultiplier: 2, discount: 0.05, minPoints: 100 },
+                gold: { name: 'Oro', pointsMultiplier: 3, discount: 0.10, minPoints: 300 }
+            };
+
+            // Product Availability (simulado)
+            const STOCK_STATUS = {
+                high: 'En stock',
+                low: 'Últimas unidades',
+                out: 'Agotado'
+            };
+
+			// Theme config
+			const THEMES = {
+				dark: { bg: '#05060a', text: '#e6eef8', glass: 'rgba(255,255,255,0.02)' },
+				light: { bg: '#ffffff', text: '#1a1a1a', glass: 'rgba(0,0,0,0.02)' }
+			};
+
+			// Cupones y descuentos
+			const COUPONS = {
+				'BIENVENIDA': { discount: 0.10, description: '10% de descuento' },
+				'COMBO2X1': { discount: 0.50, description: '50% en la segunda unidad' }
+			};
+
+			// Sistema de puntos
+			const POINTS_PER_CURRENCY = 0.1; // 0.1 puntos por cada sol
+			let userPoints = parseInt(localStorage.getItem('xoldyx_points')) || 0;
+
+			// Productos solicitados
+			const products = [
+				{id:'curso-metodos', name:'Curso VIP de Métodos', category:'Cursos', variants:{'Acceso VIP':35}},
+				{id:'crunchyroll', name:'Crunchyroll', category:'Streaming', variants:{'Perfil':10,'Cuenta Completa':25}},
+				{id:'netflix', name:'Netflix', category:'Streaming', variants:{'Perfil':15,'Cuenta Completa':35}},
+				{id:'disney', name:'Disney', category:'Streaming', variants:{'Perfil':10,'Cuenta Completa':25}},
+				{id:'hbo', name:'HBO', category:'Streaming', variants:{'Perfil':10,'Cuenta Completa':25}},
+				{id:'paramount', name:'Paramount', category:'Streaming', variants:{'Perfil':10,'Cuenta Completa':20}},
+				{id:'chatgpt', name:'ChatGPT', category:'Herramientas', variants:{'Perfil':15,'Cuenta Completa':25}},
+				{id:'youtube', name:'YouTube Premium', category:'Herramientas', variants:{'Perfil':12,'Cuenta Completa':30}},
+				{id:'canva-anual', name:'Canva (anual)', category:'Herramientas', variants:{'Perfil':25,'Cuenta Completa':70}},
+				{id:'panel-canva', name:'Panel de Canva', category:'Herramientas', variants:{'Acceso':30}},
+				{id:'gemini', name:'Gemini', category:'Herramientas', variants:{'Perfil':12,'Cuenta Completa':20}},
+				{id:'prime', name:'Prime Video', category:'Streaming', variants:{'Perfil':10,'Cuenta Completa':25}},
+				{id:'vix-links', name:'Links de Vix', category:'Servicios', variants:{'Servicio':8}},
+				{id:'vix', name:'Vix', category:'Streaming', variants:{'Perfil':8,'Cuenta Completa':20}},
+				{id:'deezer', name:'Deezer', category:'Streaming', variants:{'Perfil':10,'Cuenta Completa':20}},
+				{id:'expressvpn', name:'ExpressVPN', category:'VPN', variants:{'Cuenta Completa':40}},
+				{id:'doxeo', name:'Consultas de Doxeo', category:'Servicios', variants:{'Consulta':30}},
+			];
+
+			const imageMap = {
+				'curso-metodos':'https://api.iconify.design/mdi/book-open-variant.svg',
+				'crunchyroll':'https://api.iconify.design/logos/crunchyroll.svg',
+				'netflix':'https://www.svgrepo.com/svg/303341/netflix-1-logoo.svg',
+				'crunchyroll':'https://api.iconify.design/logos/crunchyroll.svg',
+				'disney':'https://api.iconify.design/simple-icons/disneyplus.svg',
+				'hbo':'https://api.iconify.design/simple-icons/max.svg',
+				'paramount':'https://api.iconify.design/simple-icons/paramountplus.svg',
+				'chatgpt':'https://api.iconify.design/simple-icons/openai.svg',
+				'youtube':'https://api.iconify.design/logos/youtube-icon.svg',
+				'canva-anual':'https://api.iconify.design/logos/canva.svg',
+				'panel-canva':'https://api.iconify.design/logos/canva.svg',
+				'gemini':'https://api.iconify.design/simple-icons/googlegemini.svg',
+				'Prime':'https://api.iconify.design/simple-icons/primevideo.svg',
+				'vix-links':'https://api.iconify.design/simple-icons/vix.svg',
+				'vix':'https://api.iconify.design/simple-icons/vix.svg',
+				'deezer':'https://api.iconify.design/logos/deezer-icon.svg',
+				'expressvpn':'https://api.iconify.design/simple-icons/expressvpn.svg',
+				'doxeo':'https://api.iconify.design/mdi/account-search.svg'
+			};
+
+						// State
+						const state = { cart: [] };
+						// Product overrides (image URL and link) saved in localStorage
+						const productOverrides = {};
+						function loadOverrides(){ try{ const raw = localStorage.getItem('xoldyx_overrides'); if(raw){ Object.assign(productOverrides, JSON.parse(raw)); } }catch(e){console.warn(e);} }
+						function saveOverrides(){ try{ localStorage.setItem('xoldyx_overrides', JSON.stringify(productOverrides)); }catch(e){console.warn(e);} }
+
+						let EDIT_MODE = false;
+
+						// Persistence: load/save cart to localStorage
+						function loadCart(){
+							try{
+								const raw = localStorage.getItem('xoldyx_cart');
+								if(raw){ state.cart = JSON.parse(raw); }
+							}catch(e){ console.warn('loadCart failed', e); }
+						}
+						function saveCart(){
+							try{ localStorage.setItem('xoldyx_cart', JSON.stringify(state.cart)); }catch(e){ console.warn('saveCart failed', e); }
+						}
+
+						// Helpers
+						const el = s => document.querySelector(s);
+
+						// Try local image alternatives: .png, .webp, .jpg, .svg then fallback
+						function tryNextImage(imgEl, basePath, idx, fallback){
+							const exts = ['.png','.webp','.jpg','.svg'];
+							if(idx < exts.length){
+								imgEl.onerror = function(){ tryNextImage(imgEl, basePath, idx+1, fallback); };
+								imgEl.src = basePath + exts[idx];
+							}else{
+								// final fallback
+								if(fallback){ imgEl.onerror = null; imgEl.src = fallback; } else { imgEl.onerror = null; imgEl.src='imagenes/placeholder.png'; }
+							}
+						}
+
+						// Render 'Cuentas' submenu: list all products for quick access (global)
+						function renderAccountsMenu(){
+							const sub = document.getElementById('accountsSubmenu');
+							if(!sub) return;
+							sub.innerHTML = '';
+							products.forEach(p=>{
+								const a = document.createElement('a');
+								a.href = '#';
+								a.textContent = p.name;
+								a.addEventListener('click', (e)=>{
+									e.preventDefault();
+									document.getElementById('search').value = p.name;
+									document.getElementById('filterCategory').value = p.category;
+									renderProducts();
+									sub.classList.remove('show');
+								});
+								sub.appendChild(a);
+							});
+						}
+
+						// Audio background
+						const bgAudio = document.createElement('audio'); bgAudio.id='bgAudio'; bgAudio.loop=true; bgAudio.src='videos/music.mp3'; bgAudio.preload='auto'; document.body.appendChild(bgAudio);
+						let AUDIO_ENABLED = false;
+						function tryAutoplayAudio(){
+							const saved = localStorage.getItem('xoldyx_audio');
+							if(saved==='on'){ AUDIO_ENABLED = true; bgAudio.play().catch(()=>{ AUDIO_ENABLED=false; }); }
+						}
+						function toggleAudio(){ if(bgAudio.paused){ bgAudio.play().then(()=>{ AUDIO_ENABLED=true; localStorage.setItem('xoldyx_audio','on'); el('#audioToggle').textContent='⏸︎ Música'; }).catch(()=>{ AUDIO_ENABLED=false; alert('Autoplay bloqueado por el navegador. Pulsa para reproducir.'); }); } else { bgAudio.pause(); AUDIO_ENABLED=false; localStorage.setItem('xoldyx_audio','off'); el('#audioToggle').textContent='▶︎ Música'; } }
+
+					function renderProducts(){
+				const q = (el('#search').value||'').toLowerCase();
+				const cat = el('#filterCategory').value;
+				const list = products.filter(p=>{
+					const matchQ = (p.name+' '+p.category).toLowerCase().includes(q);
+					const matchC = !cat || p.category===cat;
+					return matchQ && matchC;
+				});
+
+						el('#productsGrid').innerHTML = list.map((p,i)=>{
+					const variants = Object.entries(p.variants);
+					const firstPrice = variants[0][1];
+							    const override = productOverrides[p.id] || {};
+							    // prefer override image, then local `imagenes/{id}.png`, then imageMap
+							    const localCandidate = `imagenes/${p.id}.png`;
+							    let imgSrc = override.image || localCandidate || imageMap[p.id] || '';
+										const prodLink = override.link || '';
+							    return `
+																<div class="product-card glass p-5 animate-fade" style="animation-delay:${i*60}ms">
+									<img src="${imgSrc}" alt="${p.name}" class="product-img mx-auto mb-4" onerror="(function(el,id,fallback){ if(el.src.indexOf('imagenes/')===-1){ el.onerror=null; tryNextImage(el,'imagenes/'+id,0,fallback); } })(this,'${p.id}','${imageMap[p.id]||''}')" />
+														<h3 class="text-lg font-semibold mb-1">${ prodLink ? `<a href="${prodLink}" target="_blank" class="underline">${p.name}</a>` : p.name }</h3>
+														<div class="text-sm muted mb-2">${p.category}</div>
+														<div class="mb-3 text-sm muted">Desde <strong>${formatter.format(firstPrice)}</strong></div>
+														${ EDIT_MODE ? `
+															<div class="space-y-2 mb-3">
+																<input id="imgurl-${p.id}" placeholder="URL de imagen" value="${override.image||''}" class="w-full bg-[#071024] border border-white/6 rounded-xl px-3 py-2 text-sm" />
+																<input id="link-${p.id}" placeholder="Enlace del producto (opcional)" value="${override.link||''}" class="w-full bg-[#071024] border border-white/6 rounded-xl px-3 py-2 text-sm" />
+																<div class="flex gap-2">
+																	<button class="w-full py-2 rounded-xl bg-green-600 text-black font-semibold" onclick="saveOverride('${p.id}')">Guardar</button>
+																	<button class="w-full py-2 rounded-xl bg-red-600 text-black font-semibold" onclick="clearOverride('${p.id}')">Borrar</button>
+																</div>
+															</div>
+														` : `
+															<div class="flex gap-2">
+																<select id="variant-${p.id}" class="flex-1 bg-[#071024] border border-white/6 rounded-xl px-3 py-2 text-sm">
+																	${variants.map(([v,price])=>`<option value="${v}">${v} — ${formatter.format(price)}</option>`).join('')}
+																</select>
+																<input id="qty-${p.id}" type="number" value="1" min="1" class="w-20 bg-[#071024] border border-white/6 rounded-xl px-3 py-2 text-sm" />
+															</div>
+															<button class="mt-3 w-full py-2 rounded-xl accent-btn text-black font-semibold" onclick="addToCartById('${p.id}')">Agregar</button>
+														`}
+												</div>
+										`;
+				}).join('');
+			}
+
+					/* Carousel logic */
+					let carouselIndex = 0;
+					let carouselTimer = null;
+
+					function renderCarousel(){
+						const track = el('#carouselTrack');
+						// Seleccionar 5 productos destacados específicos
+						const destacados = products.filter(p => ['curso-metodos', 'doxeo', 'netflix', 'canva-anual', 'chatgpt'].includes(p.id));
+						track.innerHTML = destacados.map(p=>`
+							<div class="carousel-item glass p-4">
+								<img src="imagenes/${p.id}.png" 
+									alt="${p.name}" 
+									class="product-img mx-auto mb-2" 
+									onerror="tryNextImage(this, 'imagenes/${p.id}', 0, '${imageMap[p.id]||''}')" />
+								<div class="font-semibold text-sm">${p.name}</div>
+								<div class="text-xs muted">${p.category}</div>
+								<div class="mt-2 text-sm">${Object.entries(p.variants)[0][0]} — <strong>${formatter.format(Object.entries(p.variants)[0][1])}</strong></div>
+							</div>
+						`).join('');
+
+						// compute item width dynamically
+						requestAnimationFrame(()=>{
+							const first = track.querySelector('.carousel-item');
+							if(first){
+								const gap = parseInt(getComputedStyle(track).gap) || 12;
+								const w = Math.round(first.getBoundingClientRect().width + gap);
+								track.dataset.itemWidth = w;
+							}
+							updateCarousel();
+						});
+
+						// add hover pause and touch handlers
+						const carouselEl = el('#carousel');
+						if(carouselEl && !carouselEl.dataset.handlers){
+							carouselEl.dataset.handlers = '1';
+							carouselEl.addEventListener('mouseenter', ()=>{ if(carouselTimer) clearInterval(carouselTimer); });
+							carouselEl.addEventListener('mouseleave', ()=>{ startCarousel(); });
+
+							// touch swipe
+							let startX = 0;
+							carouselEl.addEventListener('touchstart', e=>{ startX = e.touches[0].clientX; });
+							carouselEl.addEventListener('touchend', e=>{ 
+								const dx = (e.changedTouches[0].clientX - startX); 
+								if(Math.abs(dx) > 40){ 
+									if(dx < 0) nextCarousel(); 
+									else prevCarousel(); 
+									startCarousel(); 
+								} 
+							});
+						}
+					}
+
+					function updateCarousel(){
+						const track = el('#carouselTrack');
+						const itemWidth = parseInt(track.dataset.itemWidth) || 252; // includes gap
+						track.style.transform = `translateX(-${carouselIndex * itemWidth}px)`;
+					}
+
+					function nextCarousel(){ 
+						carouselIndex = (carouselIndex + 1) % 5; // Solo 5 items
+						updateCarousel(); 
+					}
+
+					function prevCarousel(){ 
+						carouselIndex = Math.max(0, carouselIndex-1);
+						updateCarousel(); 
+					}
+
+					function startCarousel(){
+						if(carouselTimer) clearInterval(carouselTimer);
+						nextCarousel(); // Inicia inmediatamente
+						carouselTimer = setInterval(()=>{ 
+							nextCarousel();
+						}, 5000); // Más tiempo para ver cada imagen (5 segundos)
+					}
+
+
+			function addToCartById(id){
+				const p = products.find(x=>x.id===id);
+				const variantSel = el(`#variant-${id}`);
+				const qtyEl = el(`#qty-${id}`);
+				const variant = variantSel ? variantSel.value.split(' — ')[0] : Object.keys(p.variants)[0];
+				const qty = qtyEl ? Math.max(1,parseInt(qtyEl.value)||1) : 1;
+				addToCart(p,variant,qty);
+			}
+
+			function addToCart(p, variant, qty){
+				const price = p.variants[variant];
+				const key = `${p.id}__${variant}`;
+				const found = state.cart.find(i=>i.key===key);
+				if(found) found.qty += qty; else state.cart.push({key,id:p.id,name:p.name,variant,price,qty});
+				updateCartUI();
+				openCart();
+			}
+
+			function updateCartUI(){
+				const list = el('#cartList');
+				const count = state.cart.reduce((a,b)=>a+b.qty,0);
+				const cartCountEl = el('#cartCount');
+				cartCountEl.textContent = count;
+				// bump animation
+				cartCountEl.classList.remove('bump'); void cartCountEl.offsetWidth; cartCountEl.classList.add('bump');
+				if(state.cart.length===0){ list.innerHTML = '<p class="text-sm muted">Tu carrito está vacío.</p>'; el('#subtotal').textContent = formatter.format(0); saveCart(); return; }
+				list.innerHTML = state.cart.map((item,idx)=>{
+					return `
+						<div class="flex items-center gap-3">
+							<div class="flex-1">
+								<div class="font-semibold">${item.name}</div>
+								<div class="text-xs muted">${item.variant} · ${formatter.format(item.price)}</div>
+							</div>
+							<div class="flex items-center gap-2">
+								<button data-idx="${idx}" class="dec px-2 py-1 bg-white/5 rounded">-</button>
+								<div class="px-2">${item.qty}</div>
+								<button data-idx="${idx}" class="inc px-2 py-1 bg-white/5 rounded">+</button>
+								<div class="font-bold ml-4">${formatter.format(item.price*item.qty)}</div>
+							</div>
+						</div>
+					`;
+				}).join('');
+
+				list.querySelectorAll('.dec').forEach(btn=>btn.addEventListener('click',()=>{ const i=+btn.dataset.idx; state.cart[i].qty=Math.max(1,state.cart[i].qty-1); updateCartUI(); }));
+				list.querySelectorAll('.inc').forEach(btn=>btn.addEventListener('click',()=>{ const i=+btn.dataset.idx; state.cart[i].qty+=1; updateCartUI(); }));
+
+				const subtotal = state.cart.reduce((a,b)=>a+b.price*b.qty,0);
+				el('#subtotal').textContent = formatter.format(subtotal);
+				saveCart();
+			}
+
+						function openCart(){ el('#cartDrawer').classList.remove('hidden'); }
+						function closeCart(){ el('#cartDrawer').classList.add('hidden'); }
+
+						// Contact modal
+						function openContact() {
+							el('#contactModal').classList.remove('hidden');
+						}
+						
+						function closeContact() {
+							el('#contactModal').classList.add('hidden');
+						}
+
+						// Override helpers
+						function saveOverride(id){
+							const img = el(`#imgurl-${id}`)?.value || '';
+							const link = el(`#link-${id}`)?.value || '';
+							productOverrides[id] = { image: img, link };
+							saveOverrides();
+							renderProducts();
+						}
+						function clearOverride(id){
+							delete productOverrides[id];
+							saveOverrides();
+							renderProducts();
+						}
+
+			// Events (after DOM ready)
+			// Nuevas funciones de UI/UX
+			function toggleTheme() {
+				const isDark = document.body.classList.toggle('light-theme');
+				const theme = isDark ? THEMES.light : THEMES.dark;
+				document.body.style.background = theme.bg;
+				document.body.style.color = theme.text;
+				localStorage.setItem('xoldyx_theme', isDark ? 'light' : 'dark');
+			}
+
+			function applyCoupon() {
+				const code = el('#couponCode').value.toUpperCase();
+				const coupon = COUPONS[code];
+				if (!coupon) {
+					alert('Cupón inválido');
+					return;
+				}
+				updateCartUI(coupon.discount);
+				alert(`Cupón aplicado: ${coupon.description}`);
+			}
+
+			function saveCurrentCart() {
+				const cartName = prompt('Nombre para guardar el carrito:');
+				if (!cartName) return;
+				const savedCarts = JSON.parse(localStorage.getItem('xoldyx_saved_carts') || '{}');
+				savedCarts[cartName] = state.cart;
+				localStorage.setItem('xoldyx_saved_carts', JSON.stringify(savedCarts));
+				alert('Carrito guardado');
+			}
+
+			function handleScroll() {
+				const backToTop = el('#backToTop');
+				if (window.scrollY > 300) {
+					backToTop.style.opacity = '1';
+				} else {
+					backToTop.style.opacity = '0';
+				}
+			}
+
+			function scrollToTop() {
+				window.scrollTo({ top: 0, behavior: 'smooth' });
+			}
+
+            // Sistema de puntos y lealtad mejorado
+            function addPoints(amount) {
+                const userLevel = getUserLevel();
+                const multiplier = LOYALTY_LEVELS[userLevel].pointsMultiplier;
+                const pointsEarned = Math.floor(amount * POINTS_PER_CURRENCY * multiplier);
+                userPoints += pointsEarned;
+                localStorage.setItem('xoldyx_points', userPoints.toString());
+                updateUserLevel();
+                return pointsEarned;
+            }
+
+            function getUserLevel() {
+                if (userPoints >= LOYALTY_LEVELS.gold.minPoints) return 'gold';
+                if (userPoints >= LOYALTY_LEVELS.silver.minPoints) return 'silver';
+                return 'normal';
+            }
+
+            function updateUserLevel() {
+                const level = getUserLevel();
+                const levelInfo = LOYALTY_LEVELS[level];
+                
+                // Actualizar UI con el nivel del usuario
+                const userLevelEl = document.createElement('div');
+                userLevelEl.className = 'fixed top-4 right-4 glass p-2 text-sm';
+                userLevelEl.innerHTML = `
+                    <div class="font-semibold">${levelInfo.name}</div>
+                    <div class="text-xs muted">${userPoints} puntos</div>
+                `;
+                
+                // Remover notificación anterior si existe
+                const oldLevel = document.querySelector('.user-level-notification');
+                if (oldLevel) oldLevel.remove();
+                
+                // Agregar nueva notificación
+                userLevelEl.classList.add('user-level-notification');
+                document.body.appendChild(userLevelEl);
+                
+                // Desvanecer después de 3 segundos
+                setTimeout(() => {
+                    userLevelEl.style.opacity = '0';
+                    setTimeout(() => userLevelEl.remove(), 500);
+                }, 3000);
+            }
+
+            // Funciones de disponibilidad
+            function getProductStock(productId) {
+                // Simulación de estado de stock
+                const random = Math.random();
+                if (random > 0.8) return STOCK_STATUS.low;
+                if (random > 0.95) return STOCK_STATUS.out;
+                return STOCK_STATUS.high;
+            }
+
+            // Sistema de reseñas
+            function addReview(productId, rating, comment, userName) {
+                const reviews = JSON.parse(localStorage.getItem('xoldyx_reviews') || '{}');
+                if (!reviews[productId]) reviews[productId] = [];
+                
+                reviews[productId].push({
+                    rating,
+                    comment,
+                    userName,
+                    date: new Date().toISOString()
+                });
+                
+                localStorage.setItem('xoldyx_reviews', JSON.stringify(reviews));
+                updateProductReviews(productId);
+            }
+
+			document.addEventListener('DOMContentLoaded', ()=>{
+				// Event listeners existentes
+				el('#filterCategory').addEventListener('change', renderProducts);
+				el('#search').addEventListener('input', renderProducts);
+				el('#cartBtn').addEventListener('click', openCart);
+				el('#closeCart').addEventListener('click', closeCart);
+				el('#backdrop').addEventListener('click', closeCart);
+
+				// Contact modal handlers
+				el('#contactBtn').addEventListener('click', openContact);
+				el('#closeContact').addEventListener('click', closeContact);
+				el('#contactModal').querySelector('.absolute.inset-0').addEventListener('click', closeContact);
+
+				// Nuevos event listeners
+				el('#sortProducts').addEventListener('change', renderProducts);
+				el('#minPrice').addEventListener('input', renderProducts);
+				el('#maxPrice').addEventListener('input', renderProducts);
+				el('#themeToggle').addEventListener('click', toggleTheme);
+				el('#backToTop').addEventListener('click', scrollToTop);
+				window.addEventListener('scroll', handleScroll);
+				el('#applyCoupon').addEventListener('click', applyCoupon);
+				el('#saveCartBtn').addEventListener('click', saveCurrentCart);
+
+			el('#waCheckout').addEventListener('click', ()=>{
+					if(state.cart.length===0){ alert('Tu carrito está vacío.'); return; }
+					const pay = document.querySelector('input[name="pay"]:checked')?.value || 'Yape';
+					const name = el('#buyerName').value||'';
+					const notes = el('#orderNotes').value||'';
+					const lines = state.cart.map(i=>`${i.name} (${i.variant}) x${i.qty} = ${formatter.format(i.price*i.qty)}`);
+					const total = state.cart.reduce((a,b)=>a+b.price*b.qty,0);
+					let msg = `Hola, quiero comprar:\n${lines.join('\n')}\nTotal: ${formatter.format(total)}\nPago: ${pay}`;
+					if(name) msg += `\nNombre: ${name}`;
+					if(notes) msg += `\nNotas: ${notes}`;
+					
+					let useNumber = WHATSAPP_NUMBER;
+					if(state.cart.some(item => item.id === 'doxeo' || item.id === 'curso-metodos')){
+						// Para productos doxe, métodos y curso VIP se puede usar otro número; por ahora se usa el mismo
+						useNumber = WHATSAPP_NUMBER;
+					}
+					const url = useNumber ? `https://wa.me/${useNumber}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`;
+					window.open(url,'_blank');
+				});
+
+						document.getElementById('year').textContent = new Date().getFullYear();
+						loadOverrides();
+						loadCart();
+						renderProducts();
+						renderCarousel();
+						startCarousel();
+						updateCartUI();
+
+						// render accounts submenu and wire toggle
+						renderAccountsMenu();
+						const accountsBtn = document.getElementById('accountsBtn');
+						const accountsSub = document.getElementById('accountsSubmenu');
+						if(accountsBtn && accountsSub){
+							accountsBtn.addEventListener('click', (e)=>{ e.stopPropagation(); accountsSub.classList.toggle('show'); });
+							// click outside closes submenu
+							document.addEventListener('click', ()=>{ accountsSub.classList.remove('show'); });
+						}
+
+												// Edit mode toggle
+												el('#editToggle').addEventListener('click', ()=>{
+  if (!EDIT_MODE) {
+    const password = prompt('Ingrese la contraseña para activar el modo edición:');
+    if (password !== 'dvyer2002123') {
+      alert('Contraseña incorrecta');
+      return;
+    }
+    EDIT_MODE = true;
+  } else {
+    EDIT_MODE = false;
+  }
+  el('#editToggle').textContent = EDIT_MODE ? 'Salir edición' : 'Editar';
+  renderProducts();
+});
+
+									// Audio toggle
+									el('#audioToggle').addEventListener('click', ()=>{ toggleAudio(); });
+									tryAutoplayAudio();
+
+									// Buyer info persistence
+									const buyerNameEl = el('#buyerName');
+									const orderNotesEl = el('#orderNotes');
+									try{ const bn = localStorage.getItem('xoldyx_buyer')||''; const on = localStorage.getItem('xoldyx_notes')||''; if(buyerNameEl) buyerNameEl.value = bn; if(orderNotesEl) orderNotesEl.value = on; }catch(e){}
+									if(buyerNameEl) buyerNameEl.addEventListener('input', ()=>{ localStorage.setItem('xoldyx_buyer', buyerNameEl.value||''); });
+									if(orderNotesEl) orderNotesEl.addEventListener('input', ()=>{ localStorage.setItem('xoldyx_notes', orderNotesEl.value||''); });
+
+									// Clear cart handler
+									el('#clearCart').addEventListener('click', ()=>{ if(confirm('Vaciar el carrito?')){ state.cart = []; saveCart(); updateCartUI(); } });
+
+			// Carousel controls
+			el('#nextCarousel').addEventListener('click', ()=>{ nextCarousel(); startCarousel(); });
+			el('#prevCarousel').addEventListener('click', ()=>{ prevCarousel(); startCarousel(); });
+
+			// animate cart drawer when opening
+			const originalOpen = openCart;
+			window.openCart = function(){ el('#cartDrawer').classList.remove('hidden'); el('#cartDrawer aside').classList.add('cart-slide'); }
+			window.closeCart = function(){ el('#cartDrawer').classList.add('hidden'); el('#cartDrawer aside').classList.remove('cart-slide'); }
+			});
+		</script>
+	</body>
+</html>
