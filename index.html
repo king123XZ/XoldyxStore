@@ -98,35 +98,6 @@
 				@keyframes neonGlow { 0%{text-shadow:0 0 6px rgba(124,58,237,0.12);}50%{text-shadow:0 0 18px rgba(6,182,212,0.12);}100%{text-shadow:0 0 6px rgba(124,58,237,0.12);} }
 				@keyframes slideInRight { from{ transform:translateX(20px); opacity:0 } to{ transform:translateX(0); opacity:1 } }
 
-                /* Contador de visitas estilo neón */
-                @keyframes neonPulse {
-                    0% { 
-                        text-shadow: 0 0 7px #fff,
-                        0 0 10px #fff,
-                        0 0 21px #fff,
-                        0 0 42px #10B981,
-                        0 0 82px #10B981,
-                        0 0 92px #10B981,
-                        0 0 102px #10B981,
-                        0 0 151px #10B981;
-                    }
-                    50% {
-                        text-shadow: 0 0 4px #fff,
-                        0 0 7px #fff,
-                        0 0 15px #fff,
-                        0 0 30px #10B981,
-                        0 0 60px #10B981,
-                        0 0 70px #10B981,
-                        0 0 80px #10B981,
-                        0 0 120px #10B981;
-                    }
-                }
-                .neon-text {
-                    font-family: 'Orbitron', sans-serif;
-                    animation: neonPulse 2s infinite;
-                    color: #fff;
-                }
-
 				.animate-fade{ animation: fadeInUp .45s ease forwards; }
 				.glow-title{ animation: neonGlow 3s ease-in-out infinite; }
 				.cart-slide{ animation: slideInRight .25s ease forwards }
@@ -321,19 +292,30 @@
 				</div>
 				<div class="flex items-center gap-3">
 							<input id="search" class="bg-[#071024] border border-white/6 rounded-xl px-3 py-2 text-sm w-64" placeholder="Buscar (ej. Netflix, Canva, VPN...)" />
-							<div id="userSection" class="hidden">
-								<span id="userName" class="text-emerald-400 mr-2"></span>
-								<button id="logoutBtn" class="px-3 py-2 rounded-xl bg-red-500/20 text-sm hover:bg-red-500/30">Cerrar Sesión</button>
-							</div>
-							<div id="authSection">
-								<a href="/auth/login.html" class="px-3 py-2 rounded-xl bg-emerald-500/20 text-sm hover:bg-emerald-500/30 mr-2">Iniciar Sesión</a>
-								<a href="/auth/register.html" class="px-3 py-2 rounded-xl bg-emerald-500/20 text-sm hover:bg-emerald-500/30">Registrarse</a>
-							</div>
 							<button id="adminBtn" class="px-3 py-2 rounded-xl bg-white/5 text-sm">👑</button>
+							<button id="notificationsBtn" class="relative px-3 py-2 rounded-xl bg-white/5 text-sm">
+								📨 <span id="notificationsBadge" class="absolute -top-2 -right-2 bg-emerald-500 text-white rounded-full px-2 text-xs hidden">0</span>
+							</button>
 							<button id="editToggle" class="px-3 py-2 rounded-xl bg-white/5 text-sm">Editar</button>
 							<button id="audioToggle" class="px-3 py-2 rounded-xl bg-white/5 text-sm">▶︎ Música</button>
 							<button id="contactBtn" class="px-3 py-2 rounded-xl bg-white/5 text-sm">Contacto</button>
 							<button id="cartBtn" class="relative px-3 py-2 rounded-xl accent-btn text-black font-semibold">Carrito <span id="cartCount" class="absolute -top-2 -right-3 bg-white text-black rounded-full px-2 text-xs">0</span></button>
+						</div>
+
+						<!-- Modal de Notificaciones -->
+						<div id="notificationsModal" class="fixed inset-0 hidden z-50">
+							<div class="absolute inset-0 bg-black/60" style="backdrop-filter:blur(4px)"></div>
+							<div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md">
+								<div class="bg-[#071024] p-6 rounded-xl">
+									<div class="flex items-center justify-between mb-6">
+										<h3 class="text-xl font-bold text-emerald-400">Notificaciones</h3>
+										<button id="closeNotifications" class="px-3 py-1 rounded bg-white/5">✕</button>
+									</div>
+									<div id="notificationsModalList" class="space-y-4 max-h-[60vh] overflow-y-auto">
+										<!-- Las notificaciones se mostrarán aquí -->
+									</div>
+								</div>
+							</div>
 						</div>
 
 						<!-- Contact Modal -->
@@ -601,17 +583,6 @@
 				</footer>
 
 		<script>
-            // Contador de visitas
-            function initVisitorCounter() {
-                let count = parseInt(localStorage.getItem('visitorCount')) || 0;
-                count++; // Incrementar en 1 por cada visita
-                localStorage.setItem('visitorCount', count);
-                document.getElementById('visitorCount').textContent = count;
-            }
-            
-            // Llamar al contador cuando se carga la página
-            document.addEventListener('DOMContentLoaded', initVisitorCounter);
-
 			// Config
 			const WHATSAPP_NUMBERS = {
 				'Streaming': '51923499080',
@@ -640,17 +611,48 @@
 				light: { bg: '#ffffff', text: '#1a1a1a', glass: 'rgba(0,0,0,0.02)' }
 			};
 
-			// Cupones y descuentos (ahora dinámicos desde el panel de admin)
+			// Sistema mejorado de cupones y almacenamiento
+			const STORAGE_KEYS = {
+				COUPONS: 'xoldyx_cupones',
+				CART: 'xoldyx_cart',
+				ADMIN: 'xoldyx_admin',
+				NOTIFICATIONS: 'xoldyx_notifications',
+				SETTINGS: 'xoldyx_settings'
+			};
+
+			// Comprobar y limpiar almacenamiento local si es necesario
+			function initializeStorage() {
+				try {
+					const keys = Object.values(STORAGE_KEYS);
+					for (let key of keys) {
+						const data = localStorage.getItem(key);
+						if (data === null) continue;
+						
+						// Verificar que el JSON sea válido
+						JSON.parse(data);
+					}
+				} catch (e) {
+					console.warn('Reiniciando almacenamiento local debido a datos inválidos');
+					for (let key of Object.values(STORAGE_KEYS)) {
+						localStorage.removeItem(key);
+					}
+				}
+			}
+
 			function getCoupons() {
 				try {
-					const coupons = JSON.parse(localStorage.getItem('cupones')) || [];
+					const coupons = JSON.parse(localStorage.getItem(STORAGE_KEYS.COUPONS)) || [];
 					const validCoupons = {};
+					const now = new Date();
+
 					coupons.forEach(coupon => {
-						if (new Date(coupon.expiry) > new Date()) {
+						const expiryDate = new Date(coupon.expiry);
+						if (expiryDate > now) {
 							validCoupons[coupon.code] = {
-								discount: parseInt(coupon.discount) / 100,
+								discount: parseInt(coupon.discount),
 								description: `${coupon.discount}% de descuento`,
-								expiry: coupon.expiry
+								expiry: coupon.expiry,
+								createdAt: coupon.createdAt
 							};
 						}
 					});
@@ -659,6 +661,31 @@
 					console.warn('Error loading coupons:', e);
 					return {};
 				}
+			}
+
+			// Función para validar un cupón
+			function validateCoupon(code) {
+				const coupons = getCoupons();
+				const coupon = coupons[code.toUpperCase()];
+				
+				if (!coupon) {
+					return { valid: false, message: 'Cupón no válido' };
+				}
+
+				const now = new Date();
+				const expiryDate = new Date(coupon.expiry);
+				
+				if (expiryDate < now) {
+					return { valid: false, message: 'Cupón expirado' };
+				}
+
+				return { 
+					valid: true, 
+					coupon: {
+						...coupon,
+						code: code.toUpperCase()
+					}
+				};
 			}
 
 			// Sistema de puntos
@@ -1077,12 +1104,61 @@
 					return;
 				}
 
-				updateCartUI();
+				// Guardar el cupón aplicado en el estado del carrito
+				state.appliedCoupon = {
+					code: code,
+					discount: coupon.discount,
+					expiry: coupon.expiry
+				};
+
+				// Actualizar UI con el descuento
+				updateCartWithDiscount();
+				
+				// Mostrar notificación de éxito
+				showFloatingNotification(`¡Cupón aplicado! ${coupon.description}`, 'success');
+			}
+
+			function updateCartWithDiscount() {
 				const subtotal = state.cart.reduce((a,b)=>a+b.price*b.qty,0);
-				const discount = subtotal * coupon.discount;
+				let discount = 0;
+				let total = subtotal;
+
+				if (state.appliedCoupon) {
+					discount = subtotal * (state.appliedCoupon.discount / 100);
+					total = subtotal - discount;
+				}
+
+				el('#subtotal').textContent = formatter.format(subtotal);
 				el('#discount').textContent = `-${formatter.format(discount)}`;
-				el('#total').textContent = formatter.format(subtotal - discount);
-				alert(`Cupón aplicado: ${coupon.description}\nVálido hasta: ${expiryDate.toLocaleDateString()}`);
+				el('#total').textContent = formatter.format(total);
+
+				// Actualizar el badge del carrito
+				const cartCountEl = el('#cartCount');
+				cartCountEl.textContent = state.cart.reduce((a,b)=>a+b.qty,0);
+			}
+
+			function showFloatingNotification(message, type = 'info') {
+				const notification = document.createElement('div');
+				notification.className = `fixed bottom-4 right-4 p-4 rounded-lg shadow-lg z-50 transition-all duration-300 transform translate-y-0 opacity-100 ${
+					type === 'success' ? 'bg-emerald-500' : 
+					type === 'error' ? 'bg-red-500' : 
+					'bg-blue-500'
+				}`;
+				notification.textContent = message;
+
+				document.body.appendChild(notification);
+
+				// Animación de entrada
+				setTimeout(() => {
+					notification.style.transform = 'translateY(-20px)';
+				}, 100);
+
+				// Animación de salida y eliminación
+				setTimeout(() => {
+					notification.style.opacity = '0';
+					notification.style.transform = 'translateY(0)';
+					setTimeout(() => notification.remove(), 300);
+				}, 3000);
 			}
 
 			function saveCurrentCart() {
@@ -1176,50 +1252,114 @@
                 updateProductReviews(productId);
             }
 
-			// Sistema de Notificaciones
-			function showNotification(notification) {
-				const notificationsBar = el('#notificationsBar');
-				const title = el('#notificationTitle');
-				const message = el('#notificationMessage');
-
-				title.textContent = notification.title;
-				message.textContent = notification.message;
-
-				// Aplicar estilo según el tipo de notificación
-				notificationsBar.className = `notification-${notification.type}`;
-				switch(notification.type) {
-					case 'info':
-						notificationsBar.style.backgroundColor = '#1e40af';
-						break;
-					case 'success':
-						notificationsBar.style.backgroundColor = '#065f46';
-						break;
-					case 'warning':
-						notificationsBar.style.backgroundColor = '#92400e';
-						break;
-					case 'error':
-						notificationsBar.style.backgroundColor = '#991b1b';
-						break;
+			// Sistema de Notificaciones Global
+			function updateNotificationsBadge() {
+				const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+				const badge = el('#notificationsBadge');
+				const activeNotifications = notifications.filter(n => {
+					const notifDate = new Date(n.createdAt);
+					const now = new Date();
+					// Mostrar notificaciones de los últimos 7 días
+					const isRecent = (now - notifDate) < 7 * 24 * 60 * 60 * 1000;
+					return isRecent;
+				});
+				
+				if (activeNotifications.length > 0) {
+					badge.textContent = activeNotifications.length;
+					badge.classList.remove('hidden');
+					// Mostrar la notificación más reciente automáticamente
+					if (!localStorage.getItem('lastNotificationShown')) {
+						showLatestNotification(activeNotifications[activeNotifications.length - 1]);
+					}
+				} else {
+					badge.classList.add('hidden');
 				}
-
-				notificationsBar.classList.remove('hidden');
 			}
 
-			function hideNotification() {
-				el('#notificationsBar').classList.add('hidden');
+			function showLatestNotification(notification) {
+				const notifDiv = document.createElement('div');
+				notifDiv.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transition-all duration-500 transform translate-y-0 ${
+					notification.type === 'success' ? 'bg-emerald-500' :
+					notification.type === 'warning' ? 'bg-yellow-500' :
+					notification.type === 'error' ? 'bg-red-500' :
+					'bg-blue-500'
+				}`;
+				notifDiv.innerHTML = `
+					<div class="flex items-start gap-2">
+						<div class="flex-1">
+							<h4 class="font-medium text-white">${notification.title}</h4>
+							<p class="text-sm text-white/90">${notification.message}</p>
+						</div>
+						<button onclick="this.parentElement.parentElement.remove()" class="text-white/80 hover:text-white">✕</button>
+					</div>
+				`;
+				document.body.appendChild(notifDiv);
+				localStorage.setItem('lastNotificationShown', new Date().toISOString());
+
+				// Desaparecer después de 5 segundos
+				setTimeout(() => {
+					notifDiv.style.opacity = '0';
+					setTimeout(() => notifDiv.remove(), 500);
+				}, 5000);
+			}
+
+			function showNotificationsModal() {
+				const modal = el('#notificationsModal');
+				const list = el('#notificationsModalList');
+				const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+				
+				list.innerHTML = notifications.length > 0 ? notifications.map((notif, index) => `
+					<div class="p-4 glass ${notif.read ? 'opacity-75' : ''} ${getNotificationColorClass(notif.type)}">
+						<div class="flex justify-between items-start">
+							<div>
+								<h4 class="font-medium ${notif.read ? '' : 'text-emerald-400'}">${notif.title}</h4>
+								<p class="text-sm text-slate-300 mt-1">${notif.message}</p>
+								<span class="text-xs text-slate-400 mt-2 block">${new Date(notif.createdAt).toLocaleString()}</span>
+							</div>
+							<button onclick="markNotificationAsRead(${index})" class="text-xs text-slate-400 hover:text-emerald-400">
+								${notif.read ? 'Leído' : 'Marcar como leído'}
+							</button>
+						</div>
+					</div>
+				`).join('') : '<p class="text-center text-slate-400">No hay notificaciones</p>';
+
+				modal.classList.remove('hidden');
+			}
+
+			function getNotificationColorClass(type) {
+				switch(type) {
+					case 'info': return 'border-l-4 border-blue-500';
+					case 'success': return 'border-l-4 border-emerald-500';
+					case 'warning': return 'border-l-4 border-yellow-500';
+					case 'error': return 'border-l-4 border-red-500';
+					default: return 'border-l-4 border-slate-500';
+				}
+			}
+
+			function hideNotificationsModal() {
+				el('#notificationsModal').classList.add('hidden');
+			}
+
+			function markNotificationAsRead(index) {
+				const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+				if (notifications[index]) {
+					notifications[index].read = true;
+					localStorage.setItem('notifications', JSON.stringify(notifications));
+					updateNotificationsBadge();
+					showNotificationsModal(); // Actualizar la vista
+				}
+			}
+
+			function showNotification(notification) {
+				const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+				notification.read = false;
+				notifications.push(notification);
+				localStorage.setItem('notifications', JSON.stringify(notifications));
+				updateNotificationsBadge();
 			}
 
 			function checkNotifications() {
-				try {
-					const notifications = JSON.parse(localStorage.getItem('notifications')) || [];
-					if (notifications.length > 0) {
-						// Mostrar la notificación más reciente
-						const latest = notifications[notifications.length - 1];
-						showNotification(latest);
-					}
-				} catch(e) {
-					console.warn('Error checking notifications:', e);
-				}
+				updateNotificationsBadge();
 			}
 
 			// Función para el botón de administrador
@@ -1227,37 +1367,35 @@
 				window.location.href = 'admin/admin.html';
 			}
 
-			// Funciones de autenticación
-			function checkUserSession() {
-				const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-				const userSection = el('#userSection');
-				const authSection = el('#authSection');
-				const userName = el('#userName');
-
-				if (currentUser) {
-					userSection.classList.remove('hidden');
-					authSection.classList.add('hidden');
-					userName.textContent = `Hola, ${currentUser.name.split(' ')[0]}`;
-				} else {
-					userSection.classList.add('hidden');
-					authSection.classList.remove('hidden');
-				}
-			}
-
-			function logout() {
-				localStorage.removeItem('currentUser');
-				checkUserSession();
-				window.location.reload();
-			}
-
-			document.addEventListener('DOMContentLoaded', ()=>{
-				// Verificar sesión de usuario y notificaciones
-				checkUserSession();
+			// Sistema de notificaciones mejorado
+			function startNotificationCheck() {
 				checkNotifications();
 				
-				// Agregar eventos
+				// Comprobar nuevas notificaciones cada 5 minutos
+				setInterval(checkNotifications, 5 * 60 * 1000);
+				
+				// Comprobar notificaciones cuando la pestaña vuelve a estar activa
+				document.addEventListener('visibilitychange', () => {
+					if (document.visibilityState === 'visible') {
+						checkNotifications();
+					}
+				});
+			}
+
+			// Inicialización de la página
+			document.addEventListener('DOMContentLoaded', ()=>{
+				// Inicializar almacenamiento
+				initializeStorage();
+				// Iniciar sistema de notificaciones
+				startNotificationCheck();
+				
+				// Agregar evento al botón de administrador
 				el('#adminBtn').addEventListener('click', openAdminPanel);
-				el('#logoutBtn')?.addEventListener('click', logout);
+
+				// Eventos para notificaciones
+				el('#notificationsBtn').addEventListener('click', showNotificationsModal);
+				el('#closeNotifications').addEventListener('click', hideNotificationsModal);
+				el('#notificationsModal').querySelector('.absolute.inset-0').addEventListener('click', hideNotificationsModal);
 				// Event listeners existentes
 				el('#filterCategory').addEventListener('change', renderProducts);
 				el('#search').addEventListener('input', renderProducts);
