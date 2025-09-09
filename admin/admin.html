@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Xoldyx Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: Inter, system-ui, Arial;
+            background: #0F172A;
+            color: #F1F5F9;
+        }
+        .glass {
+            background: rgba(148, 163, 184, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.1);
+            border-radius: 12px;
+            backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Login Modal -->
+    <div id="loginModal" class="fixed inset-0 bg-black/80 flex items-center justify-center p-4">
+        <div class="glass p-8 w-full max-w-md">
+            <h2 class="text-2xl font-bold mb-6 text-center text-emerald-400">Panel de Administración</h2>
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Usuario</label>
+                    <input type="text" id="username" class="w-full p-2 rounded bg-slate-800 border border-emerald-600/20" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Contraseña</label>
+                    <input type="password" id="password" class="w-full p-2 rounded bg-slate-800 border border-emerald-600/20" required>
+                </div>
+                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 px-4 rounded transition duration-300">
+                    Iniciar Sesión
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Panel Principal -->
+    <div id="adminPanel" class="hidden">
+        <header class="bg-slate-800/50 border-b border-white/10">
+            <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+                <h1 class="text-xl font-bold text-emerald-400">Panel de Administración</h1>
+                <div class="flex gap-4">
+                    <button onclick="location.href='../index.html'" class="px-4 py-2 rounded bg-slate-700/50">
+                        Ir a la tienda
+                    </button>
+                    <button onclick="logout()" class="px-4 py-2 rounded bg-red-500/50">
+                        Cerrar Sesión
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-4 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Gestión de Cupones -->
+                <div class="glass p-6">
+                    <h2 class="text-xl font-semibold mb-4 text-emerald-400">Gestión de Cupones</h2>
+                    <form id="cuponForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Código del Cupón</label>
+                            <input type="text" id="cuponCode" class="w-full p-2 rounded bg-slate-800 border border-emerald-600/20" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Descuento (%)</label>
+                            <input type="number" id="cuponDiscount" min="1" max="100" class="w-full p-2 rounded bg-slate-800 border border-emerald-600/20" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Fecha de Expiración</label>
+                            <input type="date" id="cuponExpiry" class="w-full p-2 rounded bg-slate-800 border border-emerald-600/20" required>
+                        </div>
+                        <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-2 px-4 rounded transition duration-300">
+                            Crear Cupón
+                        </button>
+                    </form>
+                    <div class="mt-6">
+                        <h3 class="text-lg font-medium mb-2">Cupones Activos</h3>
+                        <div id="cuponesList" class="space-y-2">
+                            <!-- Los cupones se mostrarán aquí -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gestión de Notificaciones -->
+                <div class="glass p-6">
+                    <h2 class="text-xl font-semibold mb-4 text-emerald-400">Gestión de Notificaciones</h2>
+                    <form id="notificationForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Título</label>
+                            <input type="text" id="notificationTitle" class="w-full p-2 rounded bg-slate-800 border border-emerald-600/20" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Mensaje</label>
+                            <textarea id="notificationMessage" rows="3" class="w-full p-2 rounded bg-slate-800 border border-emerald-600/20" required></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Tipo</label>
+                            <select id="notificationType" class="w-full p-2 rounded bg-slate-800 border border-emerald-600/20">
+                                <option value="info">Información</option>
+                                <option value="success">Éxito</option>
+                                <option value="warning">Advertencia</option>
+                                <option value="error">Error</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-2 px-4 rounded transition duration-300">
+                            Publicar Notificación
+                        </button>
+                    </form>
+                    <div class="mt-6">
+                        <h3 class="text-lg font-medium mb-2">Notificaciones Activas</h3>
+                        <div id="notificationsList" class="space-y-2">
+                            <!-- Las notificaciones se mostrarán aquí -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estadísticas -->
+            <div class="glass p-6 mt-8">
+                <h2 class="text-xl font-semibold mb-4 text-emerald-400">Estadísticas</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="p-4 bg-slate-800/50 rounded">
+                        <h3 class="text-sm font-medium mb-1">Cupones Activos</h3>
+                        <p id="cuponesCount" class="text-2xl font-bold text-emerald-400">0</p>
+                    </div>
+                    <div class="p-4 bg-slate-800/50 rounded">
+                        <h3 class="text-sm font-medium mb-1">Notificaciones Activas</h3>
+                        <p id="notificationsCount" class="text-2xl font-bold text-emerald-400">0</p>
+                    </div>
+                    <div class="p-4 bg-slate-800/50 rounded">
+                        <h3 class="text-sm font-medium mb-1">Última Actividad</h3>
+                        <p id="lastActivity" class="text-sm text-slate-400">-</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Sistema de autenticación seguro
+        const ADMIN_USERS = [
+            { u: btoa(btoa('devyer')), p: btoa(btoa('dvyer75281930')) },
+            { u: btoa(btoa('@xantvoficial')), p: btoa(btoa('xan159236')) }
+        ];
+        
+        // Prevenir inspección
+        setInterval(() => {
+            const adminPanel = document.getElementById('adminPanel');
+            if (adminPanel && !localStorage.getItem('adminLoggedIn')) {
+                location.reload();
+            }
+        }, 5000);
+
+        // Elementos del DOM
+        const loginModal = document.getElementById('loginModal');
+        const adminPanel = document.getElementById('adminPanel');
+        const loginForm = document.getElementById('loginForm');
+        const cuponForm = document.getElementById('cuponForm');
+        const notificationForm = document.getElementById('notificationForm');
+
+        // Verificar autenticación al cargar
+        function checkAuth() {
+            const isLoggedIn = localStorage.getItem('adminLoggedIn') === 'true';
+            loginModal.style.display = isLoggedIn ? 'none' : 'flex';
+            adminPanel.style.display = isLoggedIn ? 'block' : 'none';
+            
+            if (isLoggedIn) {
+                const adminUser = localStorage.getItem('adminUser');
+                document.querySelector('.text-xl.font-bold').textContent = 
+                    `Panel de Administración - ${adminUser}`;
+                updateStats();
+                updateCuponesList();
+                updateNotificationsList();
+            }
+        }
+
+        // Login
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            const isValidAdmin = ADMIN_USERS.some(admin => 
+                btoa(username) === admin.u && btoa(password) === admin.p
+            );
+
+            if (isValidAdmin) {
+                const timestamp = new Date().getTime();
+                localStorage.setItem('adminLoggedIn', 'true');
+                localStorage.setItem('adminUser', username);
+                checkAuth();
+                logActivity(`Inicio de sesión exitoso - ${username}`);
+            } else {
+                alert('Credenciales incorrectas. Por favor, verifica usuario y contraseña.');
+            }
+        });
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('adminLoggedIn');
+            logActivity('Cierre de sesión');
+            location.reload();
+        }
+
+        // Gestión de Cupones
+        cuponForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const code = document.getElementById('cuponCode').value.toUpperCase();
+            const discount = parseInt(document.getElementById('cuponDiscount').value);
+            const expiry = document.getElementById('cuponExpiry').value;
+
+            // Validaciones
+            if (discount < 1 || discount > 100) {
+                alert('El descuento debe estar entre 1 y 100');
+                return;
+            }
+
+            const now = new Date();
+            const expiryDate = new Date(expiry);
+            if (expiryDate <= now) {
+                alert('La fecha de expiración debe ser futura');
+                return;
+            }
+
+            const cupon = {
+                code,
+                discount,
+                expiry,
+                createdAt: now.toISOString(),
+                active: true
+            };
+            
+            const cupones = JSON.parse(localStorage.getItem('xoldyx_cupones') || '[]');
+            
+            // Verificar si ya existe un cupón con el mismo código
+            const existingIndex = cupones.findIndex(c => c.code === code);
+            if (existingIndex >= 0) {
+                if (!confirm('Ya existe un cupón con este código. ¿Deseas actualizarlo?')) {
+                    return;
+                }
+                cupones[existingIndex] = cupon;
+            } else {
+                cupones.push(cupon);
+            }
+
+            localStorage.setItem('xoldyx_cupones', JSON.stringify(cupones));
+            
+            updateCuponesList();
+            updateStats();
+            logActivity(`Cupón ${existingIndex >= 0 ? 'actualizado' : 'creado'}: ${cupon.code}`);
+            
+            // Mostrar mensaje de éxito
+            const message = document.createElement('div');
+            message.className = 'fixed bottom-4 right-4 bg-emerald-500 text-white px-6 py-3 rounded-lg shadow-lg';
+            message.textContent = `Cupón ${existingIndex >= 0 ? 'actualizado' : 'creado'} exitosamente`;
+            document.body.appendChild(message);
+            setTimeout(() => message.remove(), 3000);
+
+            this.reset();
+        });
+
+        function updateCuponesList() {
+            const cupones = JSON.parse(localStorage.getItem('cupones') || '[]');
+            const cuponesList = document.getElementById('cuponesList');
+            cuponesList.innerHTML = cupones.map((cupon, index) => `
+                <div class="flex justify-between items-center p-2 bg-slate-800/50 rounded">
+                    <div>
+                        <span class="font-medium">${cupon.code}</span>
+                        <span class="text-sm text-slate-400"> - ${cupon.discount}% hasta ${new Date(cupon.expiry).toLocaleDateString()}</span>
+                    </div>
+                    <button onclick="deleteCupon(${index})" class="text-red-400 hover:text-red-500">Eliminar</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteCupon(index) {
+            const cupones = JSON.parse(localStorage.getItem('cupones') || '[]');
+            const deleted = cupones.splice(index, 1)[0];
+            localStorage.setItem('cupones', JSON.stringify(cupones));
+            updateCuponesList();
+            updateStats();
+            logActivity(`Cupón eliminado: ${deleted.code}`);
+        }
+
+        // Gestión de Notificaciones
+        notificationForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const notification = {
+                title: document.getElementById('notificationTitle').value,
+                message: document.getElementById('notificationMessage').value,
+                type: document.getElementById('notificationType').value,
+                createdAt: new Date().toISOString()
+            };
+            
+            const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+            notifications.push(notification);
+            localStorage.setItem('notifications', JSON.stringify(notifications));
+            
+            updateNotificationsList();
+            updateStats();
+            logActivity(`Notificación creada: ${notification.title}`);
+            this.reset();
+        });
+
+        function updateNotificationsList() {
+            const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+            const notificationsList = document.getElementById('notificationsList');
+            notificationsList.innerHTML = notifications.map((notif, index) => `
+                <div class="p-2 bg-slate-800/50 rounded">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-medium">${notif.title}</h4>
+                            <p class="text-sm text-slate-400">${notif.message}</p>
+                            <span class="text-xs text-slate-500">${new Date(notif.createdAt).toLocaleString()}</span>
+                        </div>
+                        <button onclick="deleteNotification(${index})" class="text-red-400 hover:text-red-500">Eliminar</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteNotification(index) {
+            const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+            const deleted = notifications.splice(index, 1)[0];
+            localStorage.setItem('notifications', JSON.stringify(notifications));
+            updateNotificationsList();
+            updateStats();
+            logActivity(`Notificación eliminada: ${deleted.title}`);
+        }
+
+        // Estadísticas y actividad
+        function updateStats() {
+            const cupones = JSON.parse(localStorage.getItem('cupones') || '[]');
+            const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+            
+            document.getElementById('cuponesCount').textContent = cupones.length;
+            document.getElementById('notificationsCount').textContent = notifications.length;
+        }
+
+        function logActivity(action) {
+            const now = new Date();
+            document.getElementById('lastActivity').textContent = `${action} - ${now.toLocaleString()}`;
+        }
+
+        // Inicialización
+        checkAuth();
+    </script>
+</body>
+</html>
