@@ -98,6 +98,35 @@
 				@keyframes neonGlow { 0%{text-shadow:0 0 6px rgba(124,58,237,0.12);}50%{text-shadow:0 0 18px rgba(6,182,212,0.12);}100%{text-shadow:0 0 6px rgba(124,58,237,0.12);} }
 				@keyframes slideInRight { from{ transform:translateX(20px); opacity:0 } to{ transform:translateX(0); opacity:1 } }
 
+                /* Contador de visitas estilo neón */
+                @keyframes neonPulse {
+                    0% { 
+                        text-shadow: 0 0 7px #fff,
+                        0 0 10px #fff,
+                        0 0 21px #fff,
+                        0 0 42px #10B981,
+                        0 0 82px #10B981,
+                        0 0 92px #10B981,
+                        0 0 102px #10B981,
+                        0 0 151px #10B981;
+                    }
+                    50% {
+                        text-shadow: 0 0 4px #fff,
+                        0 0 7px #fff,
+                        0 0 15px #fff,
+                        0 0 30px #10B981,
+                        0 0 60px #10B981,
+                        0 0 70px #10B981,
+                        0 0 80px #10B981,
+                        0 0 120px #10B981;
+                    }
+                }
+                .neon-text {
+                    font-family: 'Orbitron', sans-serif;
+                    animation: neonPulse 2s infinite;
+                    color: #fff;
+                }
+
 				.animate-fade{ animation: fadeInUp .45s ease forwards; }
 				.glow-title{ animation: neonGlow 3s ease-in-out infinite; }
 				.cart-slide{ animation: slideInRight .25s ease forwards }
@@ -267,17 +296,40 @@
 			.bg-overlay{position:fixed;inset:0;background:linear-gradient(180deg,rgba(5,6,10,0.35),rgba(5,6,10,0.6));z-index:-5}
 		</style>
 		<div class="bg-overlay" aria-hidden="true"></div>
+		<!-- Sistema de Notificaciones -->
+		<div id="notificationsBar" class="hidden">
+			<div class="bg-slate-800 border-b border-emerald-500/20">
+				<div class="max-w-6xl mx-auto px-4 py-3">
+					<div class="flex items-center justify-between">
+						<div>
+							<h4 id="notificationTitle" class="font-medium"></h4>
+							<p id="notificationMessage" class="text-sm text-slate-300"></p>
+						</div>
+						<button onclick="hideNotification()" class="text-slate-400 hover:text-slate-300">&times;</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<header class="py-5 border-b border-white/6">
 			<div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
 				<div class="flex items-center gap-4">
 					<div class="w-11 h-11 rounded-xl bg-gradient-to-br from-purple-600 to-cyan-400 flex items-center justify-center text-black font-bold">X</div>
 					<div>
 						<div class="brand text-lg">Xoldyx Store</div>
-						<div class="text-xs muted">Perfiles y cuentas completas — entrega por WhatsApp</div>
 					</div>
 				</div>
 				<div class="flex items-center gap-3">
 							<input id="search" class="bg-[#071024] border border-white/6 rounded-xl px-3 py-2 text-sm w-64" placeholder="Buscar (ej. Netflix, Canva, VPN...)" />
+							<div id="userSection" class="hidden">
+								<span id="userName" class="text-emerald-400 mr-2"></span>
+								<button id="logoutBtn" class="px-3 py-2 rounded-xl bg-red-500/20 text-sm hover:bg-red-500/30">Cerrar Sesión</button>
+							</div>
+							<div id="authSection">
+								<a href="/auth/login.html" class="px-3 py-2 rounded-xl bg-emerald-500/20 text-sm hover:bg-emerald-500/30 mr-2">Iniciar Sesión</a>
+								<a href="/auth/register.html" class="px-3 py-2 rounded-xl bg-emerald-500/20 text-sm hover:bg-emerald-500/30">Registrarse</a>
+							</div>
+							<button id="adminBtn" class="px-3 py-2 rounded-xl bg-white/5 text-sm">👑</button>
 							<button id="editToggle" class="px-3 py-2 rounded-xl bg-white/5 text-sm">Editar</button>
 							<button id="audioToggle" class="px-3 py-2 rounded-xl bg-white/5 text-sm">▶︎ Música</button>
 							<button id="contactBtn" class="px-3 py-2 rounded-xl bg-white/5 text-sm">Contacto</button>
@@ -326,7 +378,7 @@
 			<div class="top-hero">
 				<div class="navbar max-w-6xl mx-auto px-4 flex items-center justify-between">
 					<div>
-						<h2 class="text-2xl font-bold">Bienvenido a Xoldyx Store</h2>
+						<h2 class="text-2xl font-bold"></h2>
 					</div>
 					<div class="menu">
 						<button id="accountsBtn" class="menu-button">Cuentas ▾</button>
@@ -336,12 +388,11 @@
 			</div>
 			<section class="mb-8 grid md:grid-cols-2 gap-8 items-center">
 				<div>
-					<h1 class="text-4xl font-extrabold mb-3">Catálogo completo <span class="text-emerald-400">(Métodos y Servicios Premium)</span></h1>
-					<p class="text-gray-300 max-w-xl">Descubre nuestros métodos exclusivos y servicios digitales. Añade al carrito y coordina por WhatsApp para una entrega inmediata.</p>
+					<h1 class="text-4xl font-extrabold mb-3"> <span class="text-emerald-400">Bienvenido a Xoldyx Store</span></h1>
+					<p class="text-gray-300 max-w-xl">La plataforma lider en cuentas premium y cursos online.</p>
 				</div>
 				<div class="glass p-6">
-					<h3 class="text-lg font-semibold mb-2">Promoción</h3>
-					<p class="text-sm muted">Combo streaming: 2 perfiles por S/25 — pregunta por disponibilidad al confirmar tu pedido.</p>
+					<p class="text-sm muted">gracias por la visita a Xoldyx Store</p>
 				</div>
 			</section>
 
@@ -545,11 +596,22 @@
                     </div>
                 </section>
 
-				<footer class="py-10 text-center text-sm text-gray-400">
+				<footer class="py-8 text-center text-sm text-gray-400">
 					© <span id="year"></span> Xoldyx Store 
 				</footer>
 
 		<script>
+            // Contador de visitas
+            function initVisitorCounter() {
+                let count = parseInt(localStorage.getItem('visitorCount')) || 0;
+                count++; // Incrementar en 1 por cada visita
+                localStorage.setItem('visitorCount', count);
+                document.getElementById('visitorCount').textContent = count;
+            }
+            
+            // Llamar al contador cuando se carga la página
+            document.addEventListener('DOMContentLoaded', initVisitorCounter);
+
 			// Config
 			const WHATSAPP_NUMBERS = {
 				'Streaming': '51923499080',
@@ -578,11 +640,26 @@
 				light: { bg: '#ffffff', text: '#1a1a1a', glass: 'rgba(0,0,0,0.02)' }
 			};
 
-			// Cupones y descuentos
-			const COUPONS = {
-				'BIENVENIDA': { discount: 0.10, description: '10% de descuento' },
-				'COMBO2X1': { discount: 0.50, description: '50% en la segunda unidad' }
-			};
+			// Cupones y descuentos (ahora dinámicos desde el panel de admin)
+			function getCoupons() {
+				try {
+					const coupons = JSON.parse(localStorage.getItem('cupones')) || [];
+					const validCoupons = {};
+					coupons.forEach(coupon => {
+						if (new Date(coupon.expiry) > new Date()) {
+							validCoupons[coupon.code] = {
+								discount: parseInt(coupon.discount) / 100,
+								description: `${coupon.discount}% de descuento`,
+								expiry: coupon.expiry
+							};
+						}
+					});
+					return validCoupons;
+				} catch(e) {
+					console.warn('Error loading coupons:', e);
+					return {};
+				}
+			}
 
 			// Sistema de puntos
 			const POINTS_PER_CURRENCY = 0.1; // 0.1 puntos por cada sol
@@ -591,18 +668,24 @@
 			// Productos solicitados
 			const products = [
 				// Streaming
-				{id:'netflix', name:'Netflix', category:'Streaming', variants:{'Perfil':15,'Cuenta Completa':35}},
-				{id:'disney', name:'Disney+', category:'Streaming', variants:{'Perfil':10,'Cuenta Completa':25}},
-				{id:'hbo', name:'HBO Max', category:'Streaming', variants:{'Perfil':10,'Cuenta Completa':25}},
-				{id:'prime', name:'Prime Video', category:'Streaming', variants:{'Perfil':10,'Cuenta Completa':25}},
-				{id:'paramount', name:'Paramount+', category:'Streaming', variants:{'Perfil':10,'Cuenta Completa':20}},
-				{id:'crunchyroll', name:'Crunchyroll', category:'Streaming', variants:{'Perfil':10,'Cuenta Completa':25}},
-				{id:'vix', name:'Vix+', category:'Streaming', variants:{'Perfil':8,'Cuenta Completa':20}},
-				{id:'deezer', name:'Deezer', category:'Streaming', variants:{'Perfil':10,'Cuenta Completa':20}},
+				{id:'netflix', name:'Netflix', category:'Streaming', variants:{'Perfil':12,'Cuenta Completa':35}},
+				{id:'disney', name:'Disney+', category:'Streaming', variants:{'Perfil':6,'Cuenta Completa':25}},
+				{id:'hbo', name:'HBO Max', category:'Streaming', variants:{'Perfil':8,'Cuenta Completa':25}},
+				{id:'prime', name:'Prime Video', category:'Streaming', variants:{'Perfil':7,'Cuenta Completa':25}},
+				{id:'paramount', name:'Paramount+', category:'Streaming', variants:{'Perfil':5,'Cuenta Completa':20}},
+				{id:'crunchyroll', name:'Crunchyroll', category:'Streaming', variants:{'Perfil':4,'Cuenta Completa':25}},
+				{id:'vix', name:'Vix+', category:'Streaming', variants:{'Perfil':3,'Cuenta Completa':20}},
+				{id:'deezer', name:'Deezer', category:'Streaming', variants:{'Perfil':5,'Cuenta Completa':20}},
 				{id:'expressvpn', name:'ExpressVPN', category:'Streaming', variants:{'Cuenta Completa':40}},
-				{id:'chatgpt', name:'ChatGPT', category:'Streaming', variants:{'Cuenta Completa':25}},
+				{id:'chatgpt', name:'ChatGPT', category:'Streaming', variants:{'Perfil':18}},
 				{id:'doxeo', name:'doxeo', category:'Streaming', variants:{'Acceso al método':30}},
-
+				{id:'Office anual', name:'Office anual', category:'Streaming', variants:{'Acceso al método':50}},
+				{id:'canva', name:'Canva', category:'Streaming', variants:{'Canva 1 mes ':5,'Canva anual':10}},
+				{id:'youtube', name:'YouTube', category:'Streaming', variants:{'Cuenta Completa':10}},
+				{id:'gemini', name:'Gemini Pro', category:'Streaming', variants:{'Cuenta Completa':20}},
+				{id:'panel-canva', name:'Panel Canva', category:'Streaming', variants:{'Acceso al método':15}},
+				{id:'vix-links', name:'Vix+ (links)', category:'Streaming', variants:{'Acceso al método':10}},
+				{id:'appletv', name:'Apple TV', category:'Streaming', variants:{'cuenta completa':10}},
 				// Cursos
 				{id:'curso-metodos', name:'Curso Xoldyx + 30 Métodos Vip', category:'Cursos', variants:{'Acceso VIP':50}},
 
@@ -612,7 +695,7 @@
 				{id:'metodo-crunchyroll', name:'Método de Crunchyroll', category:'Métodos', variants:{'Acceso al método':30}},
 				{id:'metodo-deezer', name:'Método de Deezer', category:'Métodos', variants:{'Acceso al método':10}},
 				{id:'metodo-youtube', name:'Método de YouTube', category:'Métodos', variants:{'Acceso al método':35}},
-				{id:'metodo-hbo', name:'Método de HBO Max', category:'Métodos', variants:{'Acceso al método':25}},
+				{id:'metodo-hbo', name:'Método de HBO Max', category:'Métodos', variants:{'Acceso al método':350}},
 			];
 
 			const imageMap = {
@@ -980,13 +1063,26 @@
 
 			function applyCoupon() {
 				const code = el('#couponCode').value.toUpperCase();
-				const coupon = COUPONS[code];
+				const coupons = getCoupons();
+				const coupon = coupons[code];
+				
 				if (!coupon) {
-					alert('Cupón inválido');
+					alert('Cupón inválido o expirado');
 					return;
 				}
-				updateCartUI(coupon.discount);
-				alert(`Cupón aplicado: ${coupon.description}`);
+
+				const expiryDate = new Date(coupon.expiry);
+				if (expiryDate < new Date()) {
+					alert('Este cupón ha expirado');
+					return;
+				}
+
+				updateCartUI();
+				const subtotal = state.cart.reduce((a,b)=>a+b.price*b.qty,0);
+				const discount = subtotal * coupon.discount;
+				el('#discount').textContent = `-${formatter.format(discount)}`;
+				el('#total').textContent = formatter.format(subtotal - discount);
+				alert(`Cupón aplicado: ${coupon.description}\nVálido hasta: ${expiryDate.toLocaleDateString()}`);
 			}
 
 			function saveCurrentCart() {
@@ -1080,7 +1176,88 @@
                 updateProductReviews(productId);
             }
 
+			// Sistema de Notificaciones
+			function showNotification(notification) {
+				const notificationsBar = el('#notificationsBar');
+				const title = el('#notificationTitle');
+				const message = el('#notificationMessage');
+
+				title.textContent = notification.title;
+				message.textContent = notification.message;
+
+				// Aplicar estilo según el tipo de notificación
+				notificationsBar.className = `notification-${notification.type}`;
+				switch(notification.type) {
+					case 'info':
+						notificationsBar.style.backgroundColor = '#1e40af';
+						break;
+					case 'success':
+						notificationsBar.style.backgroundColor = '#065f46';
+						break;
+					case 'warning':
+						notificationsBar.style.backgroundColor = '#92400e';
+						break;
+					case 'error':
+						notificationsBar.style.backgroundColor = '#991b1b';
+						break;
+				}
+
+				notificationsBar.classList.remove('hidden');
+			}
+
+			function hideNotification() {
+				el('#notificationsBar').classList.add('hidden');
+			}
+
+			function checkNotifications() {
+				try {
+					const notifications = JSON.parse(localStorage.getItem('notifications')) || [];
+					if (notifications.length > 0) {
+						// Mostrar la notificación más reciente
+						const latest = notifications[notifications.length - 1];
+						showNotification(latest);
+					}
+				} catch(e) {
+					console.warn('Error checking notifications:', e);
+				}
+			}
+
+			// Función para el botón de administrador
+			function openAdminPanel() {
+				window.location.href = 'admin/admin.html';
+			}
+
+			// Funciones de autenticación
+			function checkUserSession() {
+				const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+				const userSection = el('#userSection');
+				const authSection = el('#authSection');
+				const userName = el('#userName');
+
+				if (currentUser) {
+					userSection.classList.remove('hidden');
+					authSection.classList.add('hidden');
+					userName.textContent = `Hola, ${currentUser.name.split(' ')[0]}`;
+				} else {
+					userSection.classList.add('hidden');
+					authSection.classList.remove('hidden');
+				}
+			}
+
+			function logout() {
+				localStorage.removeItem('currentUser');
+				checkUserSession();
+				window.location.reload();
+			}
+
 			document.addEventListener('DOMContentLoaded', ()=>{
+				// Verificar sesión de usuario y notificaciones
+				checkUserSession();
+				checkNotifications();
+				
+				// Agregar eventos
+				el('#adminBtn').addEventListener('click', openAdminPanel);
+				el('#logoutBtn')?.addEventListener('click', logout);
 				// Event listeners existentes
 				el('#filterCategory').addEventListener('change', renderProducts);
 				el('#search').addEventListener('input', renderProducts);
@@ -1220,4 +1397,3 @@
 		</script>
 	</body>
 </html>
-
