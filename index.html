@@ -4,17 +4,94 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>Xoldyx Store — Tienda de Cuentas</title>
+		<!-- Favicon -->
+		<link rel="icon" type="image/x-icon" href="imagenes/icono.png">
+		<link rel="apple-touch-icon" href="imagenes/icono.png">
+		<link rel="shortcut icon" href="imagenes/icono.png">
+		<!-- Force favicon refresh -->
+		<link rel="icon" type="image/png" href="imagenes/icono.png?v=2" />
 		<script src="https://cdn.tailwindcss.com"></script>
 		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Orbitron:wght@700&display=swap" rel="stylesheet">
 			<style>
-				:root{--accent1:#7c3aed;--accent2:#06b6d4}
-				body{font-family:Inter,system-ui,Arial;background:#05060a;color:#e6eef8}
-				.glass{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.04);border-radius:12px}
-				.brand{font-family:Orbitron,Inter,Arial;font-weight:800;color:var(--accent1)}
-				.accent-btn{background:linear-gradient(90deg,var(--accent1),var(--accent2));box-shadow:0 10px 30px rgba(124,58,237,0.12)}
-				.product-img{height:56px;filter:drop-shadow(0 10px 30px rgba(2,6,23,0.6));transition:transform .18s ease}
-				.product-card:hover .product-img{transform:translateY(-6px)}
-				.muted{color:#98a0b3}
+				:root{
+					--accent1:#10B981; /* Verde esmeralda */
+					--accent2:#94A3B8; /* Plateado */
+					--bg-primary:#0F172A; /* Fondo oscuro con toque azulado */
+					--text-primary:#F1F5F9; /* Texto claro */
+					--glass-bg:rgba(148, 163, 184, 0.05); /* Plateado transparente */
+					--glass-border:rgba(16, 185, 129, 0.1); /* Verde transparente */
+				}
+				body{
+					font-family:Inter,system-ui,Arial;
+					background:var(--bg-primary);
+					color:var(--text-primary);
+					background-image: linear-gradient(to bottom right, rgba(16, 185, 129, 0.05), rgba(148, 163, 184, 0.05));
+				}
+				.glass{
+					background:linear-gradient(180deg, var(--glass-bg), rgba(16, 185, 129, 0.02));
+					border:1px solid var(--glass-border);
+					border-radius:12px;
+					backdrop-filter:blur(12px);
+					box-shadow:0 4px 6px rgba(16, 185, 129, 0.05);
+				}
+				.brand{
+					font-family:Orbitron,Inter,Arial;
+					font-weight:800;
+					color:var(--accent1);
+					text-shadow:0 0 15px rgba(16, 185, 129, 0.3);
+				}
+				.accent-btn{
+					background:linear-gradient(90deg,var(--accent1),var(--accent2));
+					box-shadow:0 10px 30px rgba(16, 185, 129, 0.2);
+					border:1px solid rgba(16, 185, 129, 0.1);
+					transition:all 0.3s ease;
+				}
+				.accent-btn:hover {
+					transform:translateY(-2px);
+					box-shadow:0 15px 30px rgba(16, 185, 129, 0.3);
+				}
+				.product-img{
+					height: 120px; /* Imágenes más grandes */
+					width: auto;
+					object-fit: contain;
+					filter:drop-shadow(0 10px 30px rgba(16, 185, 129, 0.2));
+					transition:all .3s ease;
+					margin: 1rem auto;
+				}
+				/* Ajuste responsivo para las imágenes */
+				@media (max-width: 768px) {
+					.product-img {
+						height: 100px;
+					}
+				}
+				@media (max-width: 480px) {
+					.product-img {
+						height: 80px;
+					}
+				}
+				.product-card:hover .product-img{
+					transform:translateY(-6px) scale(1.05);
+					filter:drop-shadow(0 15px 40px rgba(16, 185, 129, 0.3));
+				}
+				.product-card {
+					transition: all 0.3s ease;
+					border: 1px solid rgba(16, 185, 129, 0.1);
+				}
+				.product-card:hover {
+					border-color: rgba(16, 185, 129, 0.3);
+					transform: translateY(-2px);
+				}
+				.muted{color:#94A3B8}
+				input, select, textarea {
+					background: rgba(15, 23, 42, 0.8) !important;
+					border: 1px solid rgba(16, 185, 129, 0.2) !important;
+					transition: all 0.3s ease !important;
+				}
+				input:focus, select:focus, textarea:focus {
+					border-color: var(--accent1) !important;
+					box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.1) !important;
+					outline: none !important;
+				}
 
 				/* Animations */
 				@keyframes fadeInUp { from { opacity:0; transform:translateY(10px);} to {opacity:1; transform:translateY(0);} }
@@ -26,13 +103,28 @@
 				.cart-slide{ animation: slideInRight .25s ease forwards }
 
 				/* Carousel with animations */
-				.carousel{ position:relative; overflow:hidden; border-radius:12px }
-				.carousel-track{ display:flex; gap:12px; transition:transform 1s cubic-bezier(.4,0,.2,1) }
+				.carousel{ 
+					position:relative; 
+					overflow:hidden; 
+					border-radius:12px;
+					background: linear-gradient(to right, rgba(16, 185, 129, 0.05), rgba(148, 163, 184, 0.05));
+				}
+				.carousel-track{ 
+					display:flex; 
+					gap:12px; 
+					transition:transform 0.5s cubic-bezier(.4,0,.2,1);
+					padding: 1rem;
+				}
 				.carousel-item{ 
-					min-width:240px; 
-					flex:0 0 240px;
+					min-width:280px; 
+					flex:0 0 280px;
 					opacity: 0;
 					animation: fadeSlideIn .8s forwards;
+					transform: scale(0.98);
+					transition: transform 0.3s ease;
+				}
+				.carousel-item:hover {
+					transform: scale(1);
 				}
 				@keyframes fadeSlideIn {
 					from { opacity: 0; transform: translateY(10px); }
@@ -95,6 +187,70 @@
 			.carousel-item {
 				min-width: 180px;
 				flex: 0 0 180px;
+			}
+			
+			/* Ajustes para móviles */
+			.navbar {
+				flex-direction: column;
+				gap: 1rem;
+				padding: 1rem;
+			}
+			
+			.glass {
+				padding: 1rem !important;
+			}
+			
+			/* Hacer los botones más grandes en móvil para mejor usabilidad */
+			button, .accent-btn {
+				padding: 0.75rem 1rem !important;
+				font-size: 1rem !important;
+			}
+			
+			/* Ajustar controles de filtros */
+			#controls .flex {
+				flex-direction: column;
+				gap: 1rem;
+			}
+			
+			/* Mejorar espaciado en tarjetas de productos */
+			.product-card {
+				padding: 1.5rem !important;
+			}
+			
+			/* Hacer los inputs más grandes en móvil */
+			input, select, textarea {
+				padding: 0.75rem !important;
+				font-size: 1rem !important;
+			}
+		}
+		
+		/* Ajustes para tablets */
+		@media (min-width: 641px) and (max-width: 1024px) {
+			.product-card {
+				padding: 1.25rem !important;
+			}
+			
+			.glass {
+				padding: 1.25rem !important;
+			}
+		}
+		
+		/* Ajustes generales de responsividad */
+		.max-w-6xl {
+			width: 95%;
+			margin-left: auto;
+			margin-right: auto;
+		}
+		
+		/* Mejoras en el carrito para dispositivos móviles */
+		@media (max-width: 640px) {
+			#cartDrawer aside {
+				width: 100% !important;
+			}
+			
+			#cartList {
+				max-height: 60vh;
+				overflow-y: auto;
 			}
 		}
 			</style>
@@ -171,7 +327,6 @@
 				<div class="navbar max-w-6xl mx-auto px-4 flex items-center justify-between">
 					<div>
 						<h2 class="text-2xl font-bold">Bienvenido a Xoldyx Store</h2>
-						<p class="text-sm muted">Compra perfiles y cuentas completas. Selecciona una categoría o revisa nuestras cuentas abajo.</p>
 					</div>
 					<div class="menu">
 						<button id="accountsBtn" class="menu-button">Cuentas ▾</button>
@@ -181,8 +336,8 @@
 			</div>
 			<section class="mb-8 grid md:grid-cols-2 gap-8 items-center">
 				<div>
-					<h1 class="text-4xl font-extrabold mb-3">Catálogo de cuentas <span class="text-cyan-300">(Perfil / Cuenta completa)</span></h1>
-					<p class="text-gray-300 max-w-xl">Compra perfiles o cuentas completas de plataformas populares. Añade al carrito y confirma por WhatsApp para coordinar entrega y pago.</p>
+					<h1 class="text-4xl font-extrabold mb-3">Catálogo completo <span class="text-emerald-400">(Métodos y Servicios Premium)</span></h1>
+					<p class="text-gray-300 max-w-xl">Descubre nuestros métodos exclusivos y servicios digitales. Añade al carrito y coordina por WhatsApp para una entrega inmediata.</p>
 				</div>
 				<div class="glass p-6">
 					<h3 class="text-lg font-semibold mb-2">Promoción</h3>
@@ -196,10 +351,8 @@
 						<select id="filterCategory" class="bg-[#071024] border border-white/6 rounded-xl px-3 py-2 text-sm">
 							<option value="">Todas las categorías</option>
 							<option value="Streaming">Streaming</option>
-							<option value="Herramientas">Herramientas</option>
-							<option value="VPN">VPN</option>
 							<option value="Cursos">Cursos</option>
-							<option value="Servicios">Servicios</option>
+							<option value="Métodos">Métodos</option>
 						</select>
 						<div class="flex items-center gap-2">
 							<input type="number" id="minPrice" placeholder="Precio min" class="w-24 bg-[#071024] border border-white/6 rounded-xl px-3 py-2 text-sm" />
@@ -236,7 +389,7 @@
 							</div>
 						</div>
 
-						<div id="productsGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+						<div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
 					</section>
 		</main>
 
@@ -393,12 +546,16 @@
                 </section>
 
 				<footer class="py-8 text-center text-sm text-gray-400">
-					© <span id="year"></span> Xoldyx Store — Pagos y entrega por WhatsApp
+					© <span id="year"></span> Xoldyx Store — plataformas Online y Cursos exclusivos
 				</footer>
 
 		<script>
 			// Config
-			const WHATSAPP_NUMBER = '51907376960'; // coloca tu número si quieres: '51XXXXXXXXX'
+			const WHATSAPP_NUMBERS = {
+				'Streaming': '51923499080',
+				'Métodos': '51934920256',
+				'Cursos': '51934920256'
+			};
 			const formatter = new Intl.NumberFormat('es-PE',{style:'currency',currency:'PEN'});
 
             // Loyalty Program Config
@@ -433,27 +590,39 @@
 
 			// Productos solicitados
 			const products = [
-				{id:'curso-metodos', name:'Curso VIP de Métodos', category:'Cursos', variants:{'Acceso VIP':35}},
-				{id:'crunchyroll', name:'Crunchyroll', category:'Streaming', variants:{'Perfil':10,'Cuenta Completa':25}},
+				// Streaming
 				{id:'netflix', name:'Netflix', category:'Streaming', variants:{'Perfil':15,'Cuenta Completa':35}},
-				{id:'disney', name:'Disney', category:'Streaming', variants:{'Perfil':10,'Cuenta Completa':25}},
-				{id:'hbo', name:'HBO', category:'Streaming', variants:{'Perfil':10,'Cuenta Completa':25}},
-				{id:'paramount', name:'Paramount', category:'Streaming', variants:{'Perfil':10,'Cuenta Completa':20}},
-				{id:'chatgpt', name:'ChatGPT', category:'Herramientas', variants:{'Perfil':15,'Cuenta Completa':25}},
-				{id:'youtube', name:'YouTube Premium', category:'Herramientas', variants:{'Perfil':12,'Cuenta Completa':30}},
-				{id:'canva-anual', name:'Canva (anual)', category:'Herramientas', variants:{'Perfil':25,'Cuenta Completa':70}},
-				{id:'panel-canva', name:'Panel de Canva', category:'Herramientas', variants:{'Acceso':30}},
-				{id:'gemini', name:'Gemini', category:'Herramientas', variants:{'Perfil':12,'Cuenta Completa':20}},
+				{id:'disney', name:'Disney+', category:'Streaming', variants:{'Perfil':10,'Cuenta Completa':25}},
+				{id:'hbo', name:'HBO Max', category:'Streaming', variants:{'Perfil':10,'Cuenta Completa':25}},
 				{id:'prime', name:'Prime Video', category:'Streaming', variants:{'Perfil':10,'Cuenta Completa':25}},
-				{id:'vix-links', name:'Links de Vix', category:'Servicios', variants:{'Servicio':8}},
-				{id:'vix', name:'Vix', category:'Streaming', variants:{'Perfil':8,'Cuenta Completa':20}},
+				{id:'paramount', name:'Paramount+', category:'Streaming', variants:{'Perfil':10,'Cuenta Completa':20}},
+				{id:'crunchyroll', name:'Crunchyroll', category:'Streaming', variants:{'Perfil':10,'Cuenta Completa':25}},
+				{id:'vix', name:'Vix+', category:'Streaming', variants:{'Perfil':8,'Cuenta Completa':20}},
 				{id:'deezer', name:'Deezer', category:'Streaming', variants:{'Perfil':10,'Cuenta Completa':20}},
-				{id:'expressvpn', name:'ExpressVPN', category:'VPN', variants:{'Cuenta Completa':40}},
-				{id:'doxeo', name:'Consultas de Doxeo', category:'Servicios', variants:{'Consulta':30}},
+				{id:'expressvpn', name:'ExpressVPN', category:'Streaming', variants:{'Cuenta Completa':40}},
+				{id:'chatgpt', name:'ChatGPT', category:'Streaming', variants:{'Cuenta Completa':25}},
+				{id:'doxeo', name:'doxeo', category:'Streaming', variants:{'Acceso al método':30}},
+
+				// Cursos
+				{id:'curso-metodos', name:'Curso Xoldyx + 30 Métodos Vip', category:'Cursos', variants:{'Acceso VIP':50}},
+
+				// Métodos
+				{id:'metodo-vix', name:'Método de Vix+', category:'Métodos', variants:{'Acceso al método':15}},
+				{id:'metodo-apple', name:'Método de Apple TV', category:'Métodos', variants:{'Acceso al método':30}},
+				{id:'metodo-crunchyroll', name:'Método de Crunchyroll', category:'Métodos', variants:{'Acceso al método':30}},
+				{id:'metodo-deezer', name:'Método de Deezer', category:'Métodos', variants:{'Acceso al método':10}},
+				{id:'metodo-youtube', name:'Método de YouTube', category:'Métodos', variants:{'Acceso al método':35}},
+				{id:'metodo-hbo', name:'Método de HBO Max', category:'Métodos', variants:{'Acceso al método':25}},
 			];
 
 			const imageMap = {
 				'curso-metodos':'https://api.iconify.design/mdi/book-open-variant.svg',
+				'metodo-vix':'https://api.iconify.design/mdi/book-education.svg',
+				'metodo-apple':'https://api.iconify.design/mdi/apple.svg',
+				'metodo-crunchyroll':'https://api.iconify.design/mdi/school.svg',
+				'metodo-deezer':'https://api.iconify.design/mdi/music-education.svg',
+				'metodo-youtube':'https://api.iconify.design/mdi/youtube.svg',
+				'metodo-hbo':'https://api.iconify.design/mdi/video-education.svg',
 				'crunchyroll':'https://api.iconify.design/logos/crunchyroll.svg',
 				'netflix':'https://www.svgrepo.com/svg/303341/netflix-1-logoo.svg',
 				'crunchyroll':'https://api.iconify.design/logos/crunchyroll.svg',
@@ -589,17 +758,21 @@
 
 					function renderCarousel(){
 						const track = el('#carouselTrack');
-						// Seleccionar 5 productos destacados específicos
-						const destacados = products.filter(p => ['curso-metodos', 'doxeo', 'netflix', 'canva-anual', 'chatgpt'].includes(p.id));
+						// Seleccionar productos destacados específicos
+						const destacados = products.filter(p => ['curso-metodos', 'netflix', 'expressvpn', 'doxeo-premium', 'metodo-youtube'].includes(p.id));
 						track.innerHTML = destacados.map(p=>`
 							<div class="carousel-item glass p-4">
-								<img src="imagenes/${p.id}.png" 
-									alt="${p.name}" 
-									class="product-img mx-auto mb-2" 
-									onerror="tryNextImage(this, 'imagenes/${p.id}', 0, '${imageMap[p.id]||''}')" />
-								<div class="font-semibold text-sm">${p.name}</div>
-								<div class="text-xs muted">${p.category}</div>
-								<div class="mt-2 text-sm">${Object.entries(p.variants)[0][0]} — <strong>${formatter.format(Object.entries(p.variants)[0][1])}</strong></div>
+								<div class="relative overflow-hidden rounded-xl group">
+									<img src="imagenes/${p.id}.png" 
+										alt="${p.name}" 
+										class="product-img mx-auto mb-2 transform transition-transform group-hover:scale-110" 
+										onerror="tryNextImage(this, 'imagenes/${p.id}', 0, '${imageMap[p.id]||''}')" />
+									<div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+										<div class="font-semibold text-white">${p.name}</div>
+										<div class="text-xs text-emerald-400">${p.category}</div>
+										<div class="mt-2 text-sm text-white">${Object.entries(p.variants)[0][0]} — <strong>${formatter.format(Object.entries(p.variants)[0][1])}</strong></div>
+									</div>
+								</div>
 							</div>
 						`).join('');
 
@@ -612,51 +785,109 @@
 								track.dataset.itemWidth = w;
 							}
 							updateCarousel();
+							startCarousel(); // Iniciar automáticamente
 						});
 
 						// add hover pause and touch handlers
 						const carouselEl = el('#carousel');
 						if(carouselEl && !carouselEl.dataset.handlers){
 							carouselEl.dataset.handlers = '1';
-							carouselEl.addEventListener('mouseenter', ()=>{ if(carouselTimer) clearInterval(carouselTimer); });
-							carouselEl.addEventListener('mouseleave', ()=>{ startCarousel(); });
+							
+							// Pausar en hover
+							carouselEl.addEventListener('mouseenter', ()=>{ 
+								if(carouselTimer) clearInterval(carouselTimer); 
+							});
+							
+							// Reanudar al salir
+							carouselEl.addEventListener('mouseleave', ()=>{ 
+								startCarousel(); 
+							});
 
 							// touch swipe
 							let startX = 0;
-							carouselEl.addEventListener('touchstart', e=>{ startX = e.touches[0].clientX; });
+							let isDragging = false;
+							
+							carouselEl.addEventListener('touchstart', e=>{ 
+								startX = e.touches[0].clientX;
+								isDragging = true;
+								if(carouselTimer) clearInterval(carouselTimer);
+							});
+							
+							carouselEl.addEventListener('touchmove', e=>{ 
+								if(!isDragging) return;
+								const dx = e.touches[0].clientX - startX;
+								const track = el('#carouselTrack');
+								const itemWidth = parseInt(track.dataset.itemWidth) || 252;
+								const currentOffset = -(carouselIndex * itemWidth);
+								track.style.transform = `translateX(${currentOffset + dx}px)`;
+							});
+							
 							carouselEl.addEventListener('touchend', e=>{ 
-								const dx = (e.changedTouches[0].clientX - startX); 
+								isDragging = false;
+								const dx = e.changedTouches[0].clientX - startX;
 								if(Math.abs(dx) > 40){ 
 									if(dx < 0) nextCarousel(); 
 									else prevCarousel(); 
-									startCarousel(); 
-								} 
+								} else {
+									updateCarousel(); // Volver a la posición original si el swipe fue muy corto
+								}
+								startCarousel(); 
 							});
 						}
 					}
 
 					function updateCarousel(){
 						const track = el('#carouselTrack');
-						const itemWidth = parseInt(track.dataset.itemWidth) || 252; // includes gap
+						const itemWidth = parseInt(track.dataset.itemWidth) || 252;
 						track.style.transform = `translateX(-${carouselIndex * itemWidth}px)`;
+						
+						// Actualizar indicadores de navegación
+						const buttons = track.parentElement.querySelectorAll('.carousel-nav button');
+						buttons.forEach((btn, idx) => {
+							btn.classList.toggle('bg-emerald-500/50', idx === carouselIndex);
+						});
 					}
 
 					function nextCarousel(){ 
-						carouselIndex = (carouselIndex + 1) % 5; // Solo 5 items
-						updateCarousel(); 
+						const track = el('#carouselTrack');
+						const items = track.querySelectorAll('.carousel-item');
+						carouselIndex = (carouselIndex + 1) % items.length;
+						
+						// Asegurar animación suave
+						track.style.transition = 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+						updateCarousel();
+						
+						// Reiniciar el carrusel si llega al final
+						if (carouselIndex === items.length - 1) {
+							setTimeout(() => {
+								track.style.transition = 'none';
+								carouselIndex = 0;
+								updateCarousel();
+								setTimeout(() => {
+									track.style.transition = 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+								}, 50);
+							}, 800);
+						}
 					}
 
 					function prevCarousel(){ 
 						carouselIndex = Math.max(0, carouselIndex-1);
-						updateCarousel(); 
+						const track = el('#carouselTrack');
+						track.style.transition = 'transform 0.5s ease-in-out';
+						updateCarousel();
 					}
 
 					function startCarousel(){
 						if(carouselTimer) clearInterval(carouselTimer);
-						nextCarousel(); // Inicia inmediatamente
+						// Iniciar inmediatamente con la primera transición
+						nextCarousel();
+						// Establecer el intervalo para las siguientes transiciones
 						carouselTimer = setInterval(()=>{ 
 							nextCarousel();
-						}, 5000); // Más tiempo para ver cada imagen (5 segundos)
+						}, 3000); // Rotación cada 3 segundos
+						
+						// Agregar log para debug
+						console.log('Carrusel iniciado');
 					}
 
 
@@ -874,21 +1105,55 @@
 
 			el('#waCheckout').addEventListener('click', ()=>{
 					if(state.cart.length===0){ alert('Tu carrito está vacío.'); return; }
+					
 					const pay = document.querySelector('input[name="pay"]:checked')?.value || 'Yape';
 					const name = el('#buyerName').value||'';
 					const notes = el('#orderNotes').value||'';
-					const lines = state.cart.map(i=>`${i.name} (${i.variant}) x${i.qty} = ${formatter.format(i.price*i.qty)}`);
-					const total = state.cart.reduce((a,b)=>a+b.price*b.qty,0);
-					let msg = `Hola, quiero comprar:\n${lines.join('\n')}\nTotal: ${formatter.format(total)}\nPago: ${pay}`;
-					if(name) msg += `\nNombre: ${name}`;
-					if(notes) msg += `\nNotas: ${notes}`;
 					
-					let useNumber = WHATSAPP_NUMBER;
-					if(state.cart.some(item => item.id === 'doxeo' || item.id === 'curso-metodos')){
-						// Para productos doxe, métodos y curso VIP se puede usar otro número; por ahora se usa el mismo
-						useNumber = WHATSAPP_NUMBER;
+					// Crear mensaje detallado para cada producto
+					const lines = state.cart.map(i=>{
+						const product = products.find(p => p.id === i.id);
+						return `▫️ ${i.name} (${i.variant})\n   Cantidad: ${i.qty}\n   Precio: ${formatter.format(i.price*i.qty)}`;
+					});
+					
+					const total = state.cart.reduce((a,b)=>a+b.price*b.qty,0);
+					
+					// Construir mensaje con mejor formato
+					let msg = `¡Hola! 👋 Me interesa comprar lo siguiente:\n\n`;
+					msg += `${lines.join('\n\n')}\n\n`;
+					msg += `💰 Total: ${formatter.format(total)}\n`;
+					msg += `💳 Método de pago: ${pay}\n`;
+					
+					if(name) msg += `👤 Nombre: ${name}\n`;
+					if(notes) msg += `📝 Notas adicionales: ${notes}\n`;
+					
+					// Determinar qué número usar basado en los productos en el carrito
+					let useNumber = WHATSAPP_NUMBERS['Streaming']; // número por defecto
+					
+					// Verificar si hay productos de Métodos o Cursos
+					if(state.cart.some(item => {
+						const product = products.find(p => p.id === item.id);
+						return product && (product.category === 'Métodos' || product.category === 'Cursos');
+					})) {
+						useNumber = WHATSAPP_NUMBERS['Métodos'];
 					}
-					const url = useNumber ? `https://wa.me/${useNumber}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`;
+					
+					// Personalizar el mensaje según la categoría
+					let categoryMsg = '';
+					const categories = new Set(state.cart.map(item => {
+						const product = products.find(p => p.id === item.id);
+						return product ? product.category : '';
+					}));
+					
+					if (categories.has('Métodos') || categories.has('Cursos')) {
+						categoryMsg = '\n\nEstoy interesado en métodos/cursos. Por favor, envíame la información detallada.';
+					} else {
+						categoryMsg = '\n\nEstoy interesado en estos servicios de streaming. ¿Podrías darme más información?';
+					}
+					
+					msg += categoryMsg;
+					
+					const url = `https://wa.me/${useNumber}?text=${encodeURIComponent(msg)}`;
 					window.open(url,'_blank');
 				});
 
@@ -897,7 +1162,10 @@
 						loadCart();
 						renderProducts();
 						renderCarousel();
-						startCarousel();
+						// Asegurarse de que el carrusel comience a girar
+						setTimeout(() => {
+							startCarousel();
+						}, 1000); // Iniciar después de 1 segundo para asegurar que todo está cargado
 						updateCartUI();
 
 						// render accounts submenu and wire toggle
