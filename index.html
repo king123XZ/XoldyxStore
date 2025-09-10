@@ -1,7 +1,8 @@
 <!doctype html>
 <html lang="es">
 	<head>
-		<meta charset="utf-8" />
+		<meta charset="utf-8"/>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>Xoldyx Store — Tienda de Cuentas</title>
 		<!-- Favicon -->
@@ -20,6 +21,31 @@
 					--text-primary:#F1F5F9; /* Texto claro */
 					--glass-bg:rgba(148, 163, 184, 0.05); /* Plateado transparente */
 					--glass-border:rgba(16, 185, 129, 0.1); /* Verde transparente */
+					--neon-glow: 0 0 5px #94A3B8,
+								0 0 10px #94A3B8,
+								0 0 20px #10B981,
+								0 0 30px #10B981;
+				}
+				
+				@keyframes neonPulse {
+					0%, 100% {
+						box-shadow: var(--neon-glow);
+					}
+					50% {
+						box-shadow: 0 0 10px #94A3B8,
+									0 0 20px #94A3B8,
+									0 0 30px #10B981,
+									0 0 40px #10B981;
+					}
+				}
+				
+				@keyframes textShine {
+					0%, 100% {
+						text-shadow: 0 0 20px rgba(148, 163, 184, 0.5);
+					}
+					50% {
+						text-shadow: 0 0 30px rgba(16, 185, 129, 0.7);
+					}
 				}
 				body{
 					font-family:Inter,system-ui,Arial;
@@ -35,10 +61,17 @@
 					box-shadow:0 4px 6px rgba(16, 185, 129, 0.05);
 				}
 				.brand{
-					font-family:Orbitron,Inter,Arial;
+					font-family:'Orbitron',Inter,Arial;
 					font-weight:800;
-					color:var(--accent1);
-					text-shadow:0 0 15px rgba(16, 185, 129, 0.3);
+					background: linear-gradient(45deg, #94A3B8, #E2E8F0);
+					-webkit-background-clip: text;
+					background-clip: text;
+					color: transparent;
+					text-shadow: 0 0 15px rgba(148, 163, 184, 0.3);
+				}
+				
+				.font-orbitron {
+					font-family: 'Orbitron', sans-serif;
 				}
 				.accent-btn{
 					background:linear-gradient(90deg,var(--accent1),var(--accent2));
@@ -285,7 +318,11 @@
 		<header class="py-5 border-b border-white/6">
 			<div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
 				<div class="flex items-center gap-4">
-					<div class="w-11 h-11 rounded-xl bg-gradient-to-br from-purple-600 to-cyan-400 flex items-center justify-center text-black font-bold">X</div>
+					<div class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#94A3B8] to-[#E2E8F0] flex items-center justify-center relative" 
+						 style="animation: neonPulse 2s ease-in-out infinite;">
+						<span class="text-2xl font-orbitron font-black text-[#0F172A] relative z-10">X</span>
+						<div class="absolute inset-0 rounded-xl bg-gradient-to-br from-[#94A3B8]/20 to-[#E2E8F0]/20 blur-sm"></div>
+					</div>
 					<div>
 						<div class="brand text-lg">Xoldyx Store</div>
 					</div>
@@ -328,23 +365,15 @@
 										<button id="closeContact" class="px-3 py-1 rounded bg-white/5">✕</button>
 									</div>
 									<div class="grid grid-cols-2 gap-4">
-										<a href="https://wa.me/51907376960" target="_blank" class="flex items-center gap-3 p-3 rounded-xl glass hover:bg-white/5 transition-colors">
+										<a href="https://wa.me/51934920256" target="_blank" class="flex items-center gap-3 p-3 rounded-xl glass hover:bg-white/5 transition-colors">
 											<img src="https://api.iconify.design/logos/whatsapp.svg" class="w-8 h-8" alt="WhatsApp"/>
 											<div class="text-sm">WhatsApp</div>
 										</a>
-										<a href="https://www.tiktok.com/@tu_usuario" target="_blank" class="flex items-center gap-3 p-3 rounded-xl glass hover:bg-white/5 transition-colors">
+										<a href="https://www.tiktok.com/@doxanking" target="_blank" class="flex items-center gap-3 p-3 rounded-xl glass hover:bg-white/5 transition-colors">
 											<img src="https://api.iconify.design/logos/tiktok-icon.svg" class="w-8 h-8" alt="TikTok"/>
 											<div class="text-sm">TikTok</div>
 										</a>
-										<a href="https://www.facebook.com/tu_usuario" target="_blank" class="flex items-center gap-3 p-3 rounded-xl glass hover:bg-white/5 transition-colors">
-											<img src="https://api.iconify.design/logos/facebook.svg" class="w-8 h-8" alt="Facebook"/>
-											<div class="text-sm">Facebook</div>
-										</a>
-										<a href="https://www.instagram.com/tu_usuario" target="_blank" class="flex items-center gap-3 p-3 rounded-xl glass hover:bg-white/5 transition-colors">
-											<img src="https://api.iconify.design/skill-icons/instagram.svg" class="w-8 h-8" alt="Instagram"/>
-											<div class="text-sm">Instagram</div>
-										</a>
-										<a href="https://t.me/tu_usuario" target="_blank" class="flex items-center gap-3 p-3 rounded-xl glass hover:bg-white/5 transition-colors">
+										<a href="https://t.me/XoldyxStore" target="_blank" class="flex items-center gap-3 p-3 rounded-xl glass hover:bg-white/5 transition-colors">
 											<img src="https://api.iconify.design/logos/telegram.svg" class="w-8 h-8" alt="Telegram"/>
 											<div class="text-sm">Telegram</div>
 										</a>
@@ -368,13 +397,44 @@
 					</div>
 				</div>
 			</div>
-			<section class="mb-8 grid md:grid-cols-2 gap-8 items-center">
-				<div>
-					<h1 class="text-4xl font-extrabold mb-3"> <span class="text-emerald-400">Bienvenido a Xoldyx Store</span></h1>
-					<p class="text-gray-300 max-w-xl">Descubre nuestros metodos exclusivos y servicios digitales.Añade al carrito coordina por Whatsapp para una entrega inmediata .</p>
+			<section class="mb-12">
+				<div class="text-center mb-8">
+					<h1 class="mb-3">
+						<span class="text-5xl font-orbitron font-black block mb-2" style="
+							background: linear-gradient(135deg, #94A3B8, #E2E8F0, #10B981);
+							-webkit-background-clip: text;
+							background-clip: text;
+							color: transparent;
+							text-shadow: 0 0 20px rgba(148, 163, 184, 0.5);
+							animation: textShine 3s ease-in-out infinite;">
+							Xoldyx
+						</span>
+						<span class="text-4xl font-orbitron bg-gradient-to-r from-emerald-400 to-emerald-600 text-transparent bg-clip-text">
+							Bienvenido a Xoldyx Store
+						</span>
+					</h1>
+					<p class="text-gray-300 max-w-xl mx-auto">Descubre nuestros metodos exclusivos y servicios digitales. Añade al carrito coordina por Whatsapp para una entrega inmediata.</p>
 				</div>
-				<div class="glass p-6">
-					<p class="text-sm muted"></p>
+
+				<!-- Características Destacadas -->
+				<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+					<div class="glass p-6 hover:scale-105 transition-transform duration-300">
+						<div class="text-emerald-400 text-4xl mb-4">🔒</div>
+						<h3 class="font-orbitron text-xl mb-2">Servicio Seguro</h3>
+						<p class="text-gray-400 text-sm">Garantizamos la seguridad y privacidad de todas tus transacciones</p>
+					</div>
+					
+					<div class="glass p-6 hover:scale-105 transition-transform duration-300">
+						<div class="text-emerald-400 text-4xl mb-4">⚡</div>
+						<h3 class="font-orbitron text-xl mb-2">Entrega Instantánea</h3>
+						<p class="text-gray-400 text-sm">Recibe tus productos digitales inmediatamente después de la compra</p>
+					</div>
+					
+					<div class="glass p-6 hover:scale-105 transition-transform duration-300">
+						<div class="text-emerald-400 text-4xl mb-4">💬</div>
+						<h3 class="font-orbitron text-xl mb-2">Soporte 24/7</h3>
+						<p class="text-gray-400 text-sm">Asistencia personalizada via WhatsApp en cualquier momento</p>
+					</div>
 				</div>
 			</section>
 
@@ -695,14 +755,14 @@
 			// Productos solicitados
 			const products = [
 				// Streaming
-				{id:'netflix', name:'Netflix', category:'Streaming', variants:{'Perfil':12,'Cuenta Completa':35}},
-				{id:'disney', name:'Disney+', category:'Streaming', variants:{'Perfil':6,'Cuenta Completa':25}},
-				{id:'hbo', name:'HBO Max', category:'Streaming', variants:{'Perfil':8,'Cuenta Completa':25}},
-				{id:'prime', name:'Prime Video', category:'Streaming', variants:{'Perfil':7,'Cuenta Completa':25}},
-				{id:'paramount', name:'Paramount+', category:'Streaming', variants:{'Perfil':5,'Cuenta Completa':20}},
-				{id:'crunchyroll', name:'Crunchyroll', category:'Streaming', variants:{'Perfil':4,'Cuenta Completa':25}},
-				{id:'vix', name:'Vix+', category:'Streaming', variants:{'Perfil':3,'Cuenta Completa':20}},
-				{id:'deezer', name:'Deezer', category:'Streaming', variants:{'Perfil':5,'Cuenta Completa':20}},
+				{id:'netflix', name:'Netflix', category:'Streaming', variants:{'Perfil':12}},
+				{id:'disney', name:'Disney+', category:'Streaming', variants:{'Perfil':6}},
+				{id:'hbo', name:'HBO Max', category:'Streaming', variants:{'Perfil':8}},
+				{id:'prime', name:'Prime Video', category:'Streaming', variants:{'Perfil':7}},
+				{id:'paramount', name:'Paramount+', category:'Streaming', variants:{'Perfil':5}},
+				{id:'crunchyroll', name:'Crunchyroll', category:'Streaming', variants:{'Perfil':4}},
+				{id:'vix', name:'Vix+', category:'Streaming', variants:{'Perfil':3}},
+				{id:'deezer', name:'Deezer', category:'Streaming', variants:{'Perfil':5}},
 				{id:'expressvpn', name:'ExpressVPN', category:'Streaming', variants:{'Cuenta Completa':40}},
 				{id:'chatgpt', name:'ChatGPT', category:'Streaming', variants:{'Perfil':18}},
 				{id:'doxeo', name:'doxeo', category:'Streaming', variants:{'Acceso al método':30}},
@@ -1428,19 +1488,37 @@
 					// Crear mensaje detallado para cada producto
 					const lines = state.cart.map(i=>{
 						const product = products.find(p => p.id === i.id);
-						return `▫️ ${i.name} (${i.variant})\n   Cantidad: ${i.qty}\n   Precio: ${formatter.format(i.price*i.qty)}`;
+						let productLine = '';
+						
+						// Diferentes iconos según la categoría
+						if (product.category === 'Métodos') {
+							productLine = `[📘] *${i.name}*\n`;
+						} else if (product.category === 'Cursos') {
+							productLine = `[📚] *${i.name}*\n`;
+						} else {
+							productLine = `[�] *${i.name}*\n`;
+						}
+						
+						productLine += `   > Versión: ${i.variant}\n`;
+						productLine += `   > Cantidad: ${i.qty}\n`;
+						productLine += `   > Precio: ${formatter.format(i.price*i.qty)}`;
+						return productLine;
 					});
 					
 					const total = state.cart.reduce((a,b)=>a+b.price*b.qty,0);
 					
 					// Construir mensaje con mejor formato
-					let msg = `¡Hola! 👋 Me interesa comprar lo siguiente:\n\n`;
+					let msg = `✨ *NUEVO PEDIDO EN XOLDYX STORE* ✨\n`;
+					msg += `¡Hola! 👋 Me interesa realizar la siguiente compra:\n\n`;
+					msg += `🛒 *PRODUCTOS SELECCIONADOS:*\n`;
 					msg += `${lines.join('\n\n')}\n\n`;
-					msg += `💰 Total: ${formatter.format(total)}\n`;
+					msg += `� *RESUMEN DEL PEDIDO:*\n`;
+					msg += `�💰 Total a pagar: ${formatter.format(total)}\n`;
 					msg += `💳 Método de pago: ${pay}\n`;
 					
-					if(name) msg += `👤 Nombre: ${name}\n`;
-					if(notes) msg += `📝 Notas adicionales: ${notes}\n`;
+					if(name) msg += `\n👤 *DATOS DEL CLIENTE:*\n`;
+					if(name) msg += `📝 Nombre: ${name}\n`;
+					if(notes) msg += `� Notas: ${notes}\n`;
 					
 					// Determinar qué número usar basado en los productos en el carrito
 					let useNumber = WHATSAPP_NUMBERS['Streaming']; // número por defecto
@@ -1453,20 +1531,8 @@
 						useNumber = WHATSAPP_NUMBERS['Métodos'];
 					}
 					
-					// Personalizar el mensaje según la categoría
-					let categoryMsg = '';
-					const categories = new Set(state.cart.map(item => {
-						const product = products.find(p => p.id === item.id);
-						return product ? product.category : '';
-					}));
-					
-					if (categories.has('Métodos') || categories.has('Cursos')) {
-						categoryMsg = '\n\nEstoy interesado en métodos/cursos. Por favor, envíame la información detallada.';
-					} else {
-						categoryMsg = '\n\nEstoy interesado en estos servicios de streaming. ¿Podrías darme más información?';
-					}
-					
-					msg += categoryMsg;
+					// Agregar mensaje de cierre
+					msg += '\n\n🙏 Gracias por tu atención';
 					
 					const url = `https://wa.me/${useNumber}?text=${encodeURIComponent(msg)}`;
 					window.open(url,'_blank');
@@ -1535,4 +1601,5 @@
 		</script>
 	</body>
 </html>
+
 
