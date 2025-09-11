@@ -21,22 +21,10 @@
 					--text-primary:#F1F5F9; /* Texto claro */
 					--glass-bg:rgba(148, 163, 184, 0.05); /* Plateado transparente */
 					--glass-border:rgba(16, 185, 129, 0.1); /* Verde transparente */
-					--neon-glow: 0 0 5px #94A3B8,
-								0 0 10px #94A3B8,
-								0 0 20px #10B981,
-								0 0 30px #10B981;
-				}
-				
-				@keyframes neonPulse {
-					0%, 100% {
-						box-shadow: var(--neon-glow);
-					}
-					50% {
-						box-shadow: 0 0 10px #94A3B8,
-									0 0 20px #94A3B8,
-									0 0 30px #10B981,
-									0 0 40px #10B981;
-					}
+					--neon-glow: 0 0 3px #94A3B8,
+								0 0 6px #94A3B8,
+								0 0 12px #10B981,
+								0 0 18px #10B981;
 				}
 				
 				@keyframes textShine {
@@ -45,6 +33,45 @@
 					}
 					50% {
 						text-shadow: 0 0 30px rgba(16, 185, 129, 0.7);
+					}
+				}
+				
+				@keyframes simpleNeon {
+					0%, 100% {
+						box-shadow: 0 0 5px rgba(16, 185, 129, 0.3),
+									0 0 10px rgba(16, 185, 129, 0.3),
+									0 0 15px rgba(16, 185, 129, 0.3);
+					}
+					50% {
+						box-shadow: 0 0 10px rgba(16, 185, 129, 0.5),
+									0 0 15px rgba(16, 185, 129, 0.5),
+									0 0 20px rgba(16, 185, 129, 0.5);
+					}
+				}
+				
+				@keyframes gradientShift {
+					0%, 100% {
+						background: linear-gradient(45deg, 
+							rgba(148, 163, 184, 0.6) 0%,
+							rgba(226, 232, 240, 0.6) 50%,
+							rgba(16, 185, 129, 0.2) 100%
+						);
+					}
+					50% {
+						background: linear-gradient(45deg,
+							rgba(16, 185, 129, 0.2) 0%,
+							rgba(226, 232, 240, 0.6) 50%,
+							rgba(148, 163, 184, 0.6) 100%
+						);
+					}
+				}
+				
+				@keyframes innerGlow {
+					0%, 100% {
+						filter: drop-shadow(0 0 2px rgba(16, 185, 129, 0.3));
+					}
+					50% {
+						filter: drop-shadow(0 0 5px rgba(16, 185, 129, 0.5));
 					}
 				}
 				body{
@@ -318,13 +345,11 @@
 		<header class="py-5 border-b border-white/6">
 			<div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
 				<div class="flex items-center gap-4">
-					<div class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#94A3B8] to-[#E2E8F0] flex items-center justify-center relative" 
-						 style="animation: neonPulse 2s ease-in-out infinite;">
-						<span class="text-2xl font-orbitron font-black text-[#0F172A] relative z-10">X</span>
-						<div class="absolute inset-0 rounded-xl bg-gradient-to-br from-[#94A3B8]/20 to-[#E2E8F0]/20 blur-sm"></div>
-					</div>
-					<div>
-						<div class="brand text-lg">Xoldyx Store</div>
+					<div class="h-10 px-4 rounded-lg flex items-center justify-center border border-emerald-500/50 relative overflow-hidden"
+						 style="animation: simpleNeon 2s infinite ease-in-out, gradientShift 4s infinite ease-in-out;">
+						<div class="absolute inset-0 bg-black/10"></div>
+						<span class="font-orbitron font-black text-lg text-[#0F172A] relative z-10"
+							  style="animation: innerGlow 2s infinite ease-in-out alternate">XOLDYX STORE</span>
 					</div>
 				</div>
 				<div class="flex items-center gap-3">
@@ -400,18 +425,10 @@
 			<section class="mb-12">
 				<div class="text-center mb-8">
 					<h1 class="mb-3">
-						<span class="text-5xl font-orbitron font-black block mb-2" style="
-							background: linear-gradient(135deg, #94A3B8, #E2E8F0, #10B981);
-							-webkit-background-clip: text;
-							background-clip: text;
-							color: transparent;
-							text-shadow: 0 0 20px rgba(148, 163, 184, 0.5);
-							animation: textShine 3s ease-in-out infinite;">
-							Xoldyx
-						</span>
 						<span class="text-4xl font-orbitron bg-gradient-to-r from-emerald-400 to-emerald-600 text-transparent bg-clip-text">
-							Bienvenido a Xoldyx Store
+							BIENVENIDO A      
 						</span>
+						<div><span class="text-4xl font-orbitron bg-gradient-to-r from-emerald-400 to-emerald-600 text-transparent bg-clip-text">XOLDYX STORE</span></div>
 					</h1>
 					<p class="text-gray-300 max-w-xl mx-auto">Descubre nuestros metodos exclusivos y servicios digitales. Añade al carrito coordina por Whatsapp para una entrega inmediata.</p>
 				</div>
@@ -584,42 +601,6 @@
                     </div>
                 </section>
 
-                <!-- Loyalty Program -->
-                <section class="max-w-6xl mx-auto px-4 py-12 border-t border-white/6">
-                    <h2 class="text-2xl font-bold mb-8">Programa de Fidelización</h2>
-                    <div class="grid md:grid-cols-3 gap-6">
-                        <div class="glass p-6">
-                            <h3 class="text-lg font-semibold mb-4 text-gray-300">Cliente Normal</h3>
-                            <ul class="text-sm text-gray-300 space-y-2">
-                                <li>• Acumula 1 punto por cada S/10 en compras</li>
-                                <li>• Acceso a ofertas especiales</li>
-                                <li>• Soporte prioritario</li>
-                            </ul>
-                        </div>
-                        <div class="glass p-6 relative overflow-hidden">
-                            <div class="absolute -right-6 -top-6 w-24 h-24 bg-gradient-to-br from-purple-600 to-cyan-400 rotate-45"></div>
-                            <h3 class="text-lg font-semibold mb-4 text-gray-200">Cliente Plata</h3>
-                            <ul class="text-sm text-gray-300 space-y-2">
-                                <li>• 2 puntos por cada S/10 en compras</li>
-                                <li>• 5% de descuento en todas las compras</li>
-                                <li>• Acceso anticipado a nuevos productos</li>
-                                <li>• Soporte VIP</li>
-                            </ul>
-                        </div>
-                        <div class="glass p-6 relative overflow-hidden">
-                            <div class="absolute -right-6 -top-6 w-24 h-24 bg-gradient-to-br from-yellow-600 to-yellow-400 rotate-45"></div>
-                            <h3 class="text-lg font-semibold mb-4 text-gray-200">Cliente Oro</h3>
-                            <ul class="text-sm text-gray-300 space-y-2">
-                                <li>• 3 puntos por cada S/10 en compras</li>
-                                <li>• 10% de descuento en todas las compras</li>
-                                <li>• Acceso exclusivo a ofertas especiales</li>
-                                <li>• Soporte VIP 24/7</li>
-                                <li>• Garantía extendida</li>
-                            </ul>
-                        </div>
-                    </div>
-                </section>
-
                 <!-- Legal Information -->
                 <section class="max-w-6xl mx-auto px-4 py-12 border-t border-white/6">
                     <div class="grid md:grid-cols-3 gap-6 text-sm text-gray-300">
@@ -650,13 +631,6 @@
 				'Cursos': '51934920256'
 			};
 			const formatter = new Intl.NumberFormat('es-PE',{style:'currency',currency:'PEN'});
-
-            // Loyalty Program Config
-            const LOYALTY_LEVELS = {
-                normal: { name: 'Normal', pointsMultiplier: 1, discount: 0 },
-                silver: { name: 'Plata', pointsMultiplier: 2, discount: 0.05, minPoints: 100 },
-                gold: { name: 'Oro', pointsMultiplier: 3, discount: 0.10, minPoints: 300 }
-            };
 
             // Product Availability (simulado)
             const STOCK_STATUS = {
@@ -1243,50 +1217,6 @@
 				window.scrollTo({ top: 0, behavior: 'smooth' });
 			}
 
-            // Sistema de puntos y lealtad mejorado
-            function addPoints(amount) {
-                const userLevel = getUserLevel();
-                const multiplier = LOYALTY_LEVELS[userLevel].pointsMultiplier;
-                const pointsEarned = Math.floor(amount * POINTS_PER_CURRENCY * multiplier);
-                userPoints += pointsEarned;
-                localStorage.setItem('xoldyx_points', userPoints.toString());
-                updateUserLevel();
-                return pointsEarned;
-            }
-
-            function getUserLevel() {
-                if (userPoints >= LOYALTY_LEVELS.gold.minPoints) return 'gold';
-                if (userPoints >= LOYALTY_LEVELS.silver.minPoints) return 'silver';
-                return 'normal';
-            }
-
-            function updateUserLevel() {
-                const level = getUserLevel();
-                const levelInfo = LOYALTY_LEVELS[level];
-                
-                // Actualizar UI con el nivel del usuario
-                const userLevelEl = document.createElement('div');
-                userLevelEl.className = 'fixed top-4 right-4 glass p-2 text-sm';
-                userLevelEl.innerHTML = `
-                    <div class="font-semibold">${levelInfo.name}</div>
-                    <div class="text-xs muted">${userPoints} puntos</div>
-                `;
-                
-                // Remover notificación anterior si existe
-                const oldLevel = document.querySelector('.user-level-notification');
-                if (oldLevel) oldLevel.remove();
-                
-                // Agregar nueva notificación
-                userLevelEl.classList.add('user-level-notification');
-                document.body.appendChild(userLevelEl);
-                
-                // Desvanecer después de 3 segundos
-                setTimeout(() => {
-                    userLevelEl.style.opacity = '0';
-                    setTimeout(() => userLevelEl.remove(), 500);
-                }, 3000);
-            }
-
             // Funciones de disponibilidad
             function getProductStock(productId) {
                 // Simulación de estado de stock
@@ -1496,7 +1426,7 @@
 						} else if (product.category === 'Cursos') {
 							productLine = `[📚] *${i.name}*\n`;
 						} else {
-							productLine = `[�] *${i.name}*\n`;
+							productLine = `[🛠️] *${i.name}*\n`;
 						}
 						
 						productLine += `   > Versión: ${i.variant}\n`;
@@ -1512,13 +1442,13 @@
 					msg += `¡Hola! 👋 Me interesa realizar la siguiente compra:\n\n`;
 					msg += `🛒 *PRODUCTOS SELECCIONADOS:*\n`;
 					msg += `${lines.join('\n\n')}\n\n`;
-					msg += `� *RESUMEN DEL PEDIDO:*\n`;
-					msg += `�💰 Total a pagar: ${formatter.format(total)}\n`;
+					msg += `✨ *RESUMEN DEL PEDIDO:*\n`;
+					msg += `💰 Total a pagar: ${formatter.format(total)}\n`;
 					msg += `💳 Método de pago: ${pay}\n`;
 					
 					if(name) msg += `\n👤 *DATOS DEL CLIENTE:*\n`;
 					if(name) msg += `📝 Nombre: ${name}\n`;
-					if(notes) msg += `� Notas: ${notes}\n`;
+					if(notes) msg += `📝 Notas: ${notes}\n`;
 					
 					// Determinar qué número usar basado en los productos en el carrito
 					let useNumber = WHATSAPP_NUMBERS['Streaming']; // número por defecto
@@ -1601,5 +1531,3 @@
 		</script>
 	</body>
 </html>
-
-
